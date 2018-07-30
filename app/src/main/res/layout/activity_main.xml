@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:orientation="vertical"
+	tools:context="com.al.ddpunch.MainActivity">
+
+
+	<TextView android:padding="5dp" android:id="@+id/version_text" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="版本号"/>
+
+	<Button android:id="@+id/start_work" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="开始工作"/>
+	<Button android:id="@+id/stop_work" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="停止工作"/>
+	<Button android:id="@+id/email_work" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="测试邮件发送"/>
+
+</LinearLayout>
