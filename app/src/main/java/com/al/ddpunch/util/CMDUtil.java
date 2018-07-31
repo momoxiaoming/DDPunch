@@ -8,33 +8,38 @@ import java.io.IOException;
  */
 
 public class CMDUtil {
-    public static void stopProcess( String pakeName) {
+    public static void stopProcess(String pakeName) {
         String cmd = "am force-stop " + pakeName;
 
         try {
 
-            execRootCmdSilent( cmd);
+            execRootCmdSilent(cmd);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     //模拟点击坐标
-    public static void ClickXy(String x,String y){
-        String cmd = "input tap "+x+" "+y ;
+    public static void ClickXy(String x, String y) {
+        String cmd = "input tap " + x + " " + y;
 
         try {
 
-            execRootCmdSilent( cmd);
+            execRootCmdSilent(cmd);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    //重启
+    public static void doBoot() {
+        execRootCmdSilent("reboot");
+    }
+
     /**
      * 执行命令但不关注结果输出
      */
-    private  static int execRootCmdSilent(String cmd) {
+    private static int execRootCmdSilent(String cmd) {
         int result = -1;
         DataOutputStream dos = null;
 

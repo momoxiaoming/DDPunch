@@ -20,10 +20,10 @@ public class Comm {
 
 
     //上班打卡时间段,一般20分钟间隔即可,注意格式
-    public static final  String[] upJobTime=new String[]{"09:00","9:10"};
+    public static final  String[] upJobTime=new String[]{"09:00","09:20"};
 
     //下班打卡时间段,注意格式
-    public static final  String[] downJobTime=new String[]{"18:00","20:00"};
+    public static final  String[] downJobTime=new String[]{"17:00","22:00"};
 
     //钉钉包名
     public static final String dingding_PakeName="com.alibaba.android.rimet";

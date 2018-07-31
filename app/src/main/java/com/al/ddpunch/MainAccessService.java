@@ -7,7 +7,6 @@ import android.content.pm.PackageManager;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 
-import com.al.ddpunch.email.EmaiUtil;
 import com.al.ddpunch.util.CMDUtil;
 import com.al.ddpunch.util.LogUtil;
 import com.al.ddpunch.util.SharpData;
@@ -77,8 +76,7 @@ public class MainAccessService extends AccessibilityService {
 
     private void new_work(int order) {
 
-        //休眠五秒后开启工作
-        sleepT(5000);
+
 
         try {
             //脚本初始化,判断是否在主页
@@ -98,10 +96,9 @@ public class MainAccessService extends AccessibilityService {
                 } else {
                     startApplication(getApplicationContext(), Comm.dingding_PakeName);
                 }
-                sleepT(1000);  //两秒钟启动一次
+                sleepT(1000);  //1秒钟启动一次
                 if (node != null) {
                     node = refshPage();
-
                 }
                 m--;
             }
@@ -110,11 +107,22 @@ public class MainAccessService extends AccessibilityService {
             }
             sleepT(1000);
 
-            //确认进入钉钉主页
-            if (!findResIdById(node, main_page_ResId)) {
+            int k = 10;
+            while (k > 0) {
+                //确认进入钉钉主页
+                if (findResIdById(node, main_page_ResId)) {
+                    LogUtil.D("已进入app主页");
+                    break;
+                }
+                sleepT(1000);
+                if (node != null)
+                    node = refshPage();
+                k--;
+            }
+            if (k <= 0) {
                 throw new Exception("已进入app,未找到主页节点");
             }
-            sleepT(1000);
+
 
             //进入工作页,点击工作按钮
             if (!findResIdById(node, work_page_ResId)) {
@@ -145,30 +153,32 @@ public class MainAccessService extends AccessibilityService {
                 throw new Exception("已进入工作页,但未找到相关节点");
             }
 
-            sleepT(5000); //延迟5秒
             node = refshPage();
 
-            //确定进入考勤打卡页面
-            List<AccessibilityNodeInfo> list2 = node.findAccessibilityNodeInfosByViewId(webview_page_ResId);
-            if (list2 == null || list2.size() == 0) {
-                throw new Exception("进入考勤打卡页面异常");
+            int l=10;
+            while (l>0){
+
+                List<AccessibilityNodeInfo> list2 = node.findAccessibilityNodeInfosByViewId(webview_page_ResId);
+                if (list2 != null || list2.size() != 0) {
+                    break;
+                }
+                l--;
+                node=refshPage();
+                sleepT(1000);
             }
 
-            sleepT(1000);
-            node = refshPage();
+            if(l<=0){
+                throw new Exception("进入考勤打卡页面异常");
+            }
+            LogUtil.D("确认已进入考勤打卡页面");
+
             //尝试打卡操作
-            int j = 10;
+            int j = 2;
             while (j >= 0) {
                 LogUtil.D("尝试打卡操作->" + j);
-                if (DoDaKa(order)) {
-                    SharpData.setIsCompent(getApplicationContext(), order);
-                    EmaiUtil.sendMsg("打卡成功", Comm.EmailInfo);
-                    LogUtil.E("打卡成功");
-                    return;
-                }
+                DoDaKa(order);
                 //执行完操作之后,判断是否打卡成功
                 sleepT(2000);
-
                 j--;
             }
 
@@ -185,7 +195,7 @@ public class MainAccessService extends AccessibilityService {
     }
 
 
-    private boolean DoDaKa(int order) {
+    private void DoDaKa(int order) {
         if (order == 1) {
             //上班打卡
             CMDUtil.ClickXy("240", "314");
@@ -195,32 +205,31 @@ public class MainAccessService extends AccessibilityService {
         }
 
         //检查是否打卡成功
-        AccessibilityNodeInfo node = refshPage();
-
-        //查询所有的根节点,假如有弹窗,说明打卡成功
-        List<AccessibilityNodeInfo> list = getAllNode(node, null);
-        LogUtil.D("所有节点个数-->" + list.size());
-        if (list != null) {
-            for (AccessibilityNodeInfo info : list) {
-                String className = info.getClassName().toString();
-                if ("android.app.Dialog".equals(className)) {
-                    //说明可能是打卡导致的成功弹窗
-                    AccessibilityNodeInfo nodeInfo = info.getChild(0);
-                    if (nodeInfo != null) {
-                        nodeInfo = nodeInfo.getChild(1);
-                        if (nodeInfo != null) {
-                            String des = nodeInfo.getContentDescription().toString();
-                            if (des.contains("打卡成功")) {
-
-                                return true;
-                            }
-                        }
-                    }
-
-                }
-            }
-        }
-        return false;
+//       ;
+//        LogUtil.D("根节点");
+//        //查询所有的根节点,假如有弹窗,说明打卡成功
+//        List<AccessibilityNodeInfo> list = getAllNode(node, null);
+//        LogUtil.D("所有节点个数-->" + list.size());
+//        if (list != null) {
+//            for (AccessibilityNodeInfo info : list) {
+//                String className = info.getClassName().toString();
+//                if ("android.app.Dialog".equals(className)) {
+//                    //说明可能是打卡导致的成功弹窗
+//                    AccessibilityNodeInfo nodeInfo = info.getChild(0);
+//                    if (nodeInfo != null) {
+//                        nodeInfo = nodeInfo.getChild(1);
+//                        if (nodeInfo != null) {
+//                            String des = nodeInfo.getContentDescription().toString();
+//                            if (des.contains("打卡成功")) {
+//                                return true;
+//                            }
+//                        }
+//                    }
+//
+//                }
+//            }
+//        }
+//        return false;
     }
 
     //程序异常时的操作方法
@@ -229,9 +238,16 @@ public class MainAccessService extends AccessibilityService {
         while (true) {
             //执行回退操作
             AccessibilityNodeInfo node = refshPage();
+
             if (i < 0) {
                 //说明可能卡住了,无法回退,强行停止程序进程
-                CMDUtil.stopProcess(node.getPackageName().toString());
+                if (node != null) {
+                    CMDUtil.stopProcess(node.getPackageName().toString());
+
+                } else {
+                    performGlobalAction(AccessibilityService.GLOBAL_ACTION_HOME);
+
+                }
                 break;
             }
             LogUtil.D("执行回退操作");
@@ -242,7 +258,7 @@ public class MainAccessService extends AccessibilityService {
                 break;
             }
             i--;
-            sleepT(1000); //睡眠一秒
+            sleepT(2000); //睡眠一秒
         }
 
     }
@@ -258,19 +274,24 @@ public class MainAccessService extends AccessibilityService {
         if (list == null) {
             list = new ArrayList<>();
         }
+        LogUtil.D("递归节点-->"+node+"---"+node.getChildCount());
         if (node != null && node.getChildCount() != 0) {
             for (int i = 0; i < node.getChildCount(); i++) {
                 AccessibilityNodeInfo info = node.getChild(i);
-                if (node != null) {
+                if (info != null) {
+                    LogUtil.D("打卡节点数-"+info);
                     list.add(info);
                     node = info;
+
                 }
             }
 
         } else {
             return list;
         }
+
         return getAllNode(node, list);
+
     }
 
 
@@ -286,8 +307,6 @@ public class MainAccessService extends AccessibilityService {
     }
 
 
-
-
     public static boolean startApplication(Context context, String packageName) {
         boolean rlt = false;
 
@@ -301,7 +320,6 @@ public class MainAccessService extends AccessibilityService {
         }
         return rlt;
     }
-
 
 
     public boolean findResIdById(AccessibilityNodeInfo info, String resId) {

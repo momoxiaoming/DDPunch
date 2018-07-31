@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
+import com.al.ddpunch.util.CMDUtil;
 import com.al.ddpunch.util.LogUtil;
 import com.al.ddpunch.util.SharpData;
 import com.al.ddpunch.util.TimeUtil;
@@ -120,7 +121,12 @@ public class DDService extends Service {
             if (hour == 24)
             {  //下午12点自动清除打卡数据
                 SharpData.setIsCompent(getApplicationContext(), 0);
-
+                try {
+                    Thread.sleep(5000);
+                    CMDUtil.doBoot(); //执行重启
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
             if (!Comm.opendownJob) {
                 LogUtil.D("下班班打卡任务指令获取已关闭");
@@ -146,18 +152,11 @@ public class DDService extends Service {
 
         if (jobtime_hour_2.startsWith("0")) {
             jobtime_hour_2 = jobtime_hour_2.substring(1, 2);
-        } else {
-            jobtime_hour_2 = jobtime_hour_2.substring(0, 2);
-
         }
 
         int hour1 = Integer.valueOf(jobtime_hour_1);
         int hour2 = Integer.valueOf(jobtime_hour_2);
 
-
-
-        LogUtil.D("-"+jobtime_hour_1);
-        LogUtil.D("-"+jobtime_hour_2);
 
         String min_1 = jobtime_1.split(":")[1];
         String min_2 = jobtime_2.split(":")[1];
@@ -169,27 +168,27 @@ public class DDService extends Service {
 
         }
         if (min_2.startsWith("0")) {
-            min_2 = min_2.substring(min_2.length() - 1, min_2.length());
-        } else {
-            min_2 = min_2.substring(min_2.length() - 2, min_2.length());
+            min_2 = min_2.substring(1,2);
         }
 
 
         int min1 = Integer.valueOf(min_1);
         int min2 = Integer.valueOf(min_2);
 
+        LogUtil.D("下午截取的设定时间1--" + hour1 + ":" + min1);
+        LogUtil.D("下午截取的设定时间2--" + hour2 + ":" + min2);
+
         if (hour1 > hour2) {
-            LogUtil.D("设置的时间有误");
+            LogUtil.E("设置的时间有误");
             return;
         } else if (hour1 == hour2) {
-            if (min1 < min2) {
-                LogUtil.D("设置的时间有误");
+            if (min1 >= min2) {
+                LogUtil.E("设置的时间有误");
                 return;
             }
         }
 
-        LogUtil.D("下午截取的设定时间1--" + hour1 + ":" + min1);
-        LogUtil.D("下午截取的设定时间2--" + hour2 + ":" + min2);
+
         if (hour  >= hour1 && hour <= hour2) {
             if ((hour + 12) == hour1) { //等于最小
                 SharpData.setOrderType(getApplicationContext(), apm==0?1:2);

@@ -16,6 +16,7 @@ public class SharpData {
     private static final String Compent_TYPE="compent_type";
 
     private static final String open_TYPE="open_type";
+    private static final String email_adress="email_adress";
 
 
     // 0默认什么不做,1为打上班卡,2为打下班卡
@@ -59,10 +60,21 @@ public class SharpData {
     }
 
 
-    //存储
+    //存储邮箱
     public static void setOpenApp(Context context,int order){
         SharedPreferences sp=context.getSharedPreferences(spName,Context.MODE_PRIVATE);
         sp.edit().putInt(open_TYPE,order).commit();
     }
+    public static String getEmailData(Context context){
+        SharedPreferences sp=context.getSharedPreferences(spName,Context.MODE_PRIVATE);
+        String order= sp.getString(email_adress,"");
+        return order;
+    }
 
+
+    //存储邮箱
+    public static boolean setEmailData(Context context,String order){
+        SharedPreferences sp=context.getSharedPreferences(spName,Context.MODE_PRIVATE);
+        return sp.edit().putString(email_adress,order).commit();
+    }
 }
