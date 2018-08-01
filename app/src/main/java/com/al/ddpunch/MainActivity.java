@@ -10,11 +10,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.al.ddpunch.email.EmaiUtil;
+import com.al.ddpunch.util.LogUtil;
 import com.al.ddpunch.util.SharpData;
 
 import java.util.regex.Matcher;
@@ -22,10 +25,20 @@ import java.util.regex.Pattern;
 
 public class MainActivity extends AppCompatActivity {
 
+
+    private CheckBox upBox, downBox;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        upBox = findViewById(R.id.upJob_btn);
+        downBox = findViewById(R.id.downJob_btn);
+        TextView timeText = findViewById(R.id.time_text);
+        TextView timeText2 = findViewById(R.id.time_text2);
+
+        timeText.setText("上班打卡时间段:"+Comm.upJobTime[0]+"-"+Comm.upJobTime[1]);
+        timeText2.setText("下班打卡时间段:"+Comm.downJobTime[0]+"-"+Comm.downJobTime[1]);
 
 
         TextView text = findViewById(R.id.version_text);
@@ -92,15 +105,79 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-//        if (!isAccessibilitySettingsOn(getApplicationContext())) {
-//            Toast.makeText(getApplicationContext(), "请开启辅助服务", Toast.LENGTH_SHORT).show();
-//            Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
-//            startActivity(intent);
-//        }
-
         editText.setText(SharpData.getEmailData(getApplicationContext()) + "");
 
+        setCheck();
+
+
+        upBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                int open = SharpData.getOpenJob(getApplicationContext());
+
+
+                if (open == 0) {
+                    SharpData.setOpenJob(getApplicationContext(), isChecked ? 1 : 0);
+                } else if (open == 1) {
+                    SharpData.setOpenJob(getApplicationContext(), isChecked ? 1 : 0);
+                } else if (open == 2) {
+                    SharpData.setOpenJob(getApplicationContext(), isChecked ? 3 : 2);
+                } else if (open == 3) {
+                    SharpData.setOpenJob(getApplicationContext(), isChecked ? 3 : 2);
+                }
+
+            }
+        });
+
+        downBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                int open = SharpData.getOpenJob(getApplicationContext());
+
+                if (open == 0) {
+                    SharpData.setOpenJob(getApplicationContext(), isChecked ? 2 : 0);
+                } else if (open == 1) {
+                    SharpData.setOpenJob(getApplicationContext(), isChecked ? 3 : 1);
+                } else if (open == 2) {
+                    SharpData.setOpenJob(getApplicationContext(), isChecked ? 2 : 0);
+                } else if (open == 3) {
+                    SharpData.setOpenJob(getApplicationContext(), isChecked ? 3 : 1);
+                }
+            }
+        });
+
+
     }
+
+    private void setCheck() {
+        int open = SharpData.getOpenJob(getApplicationContext());
+        LogUtil.D("open---" + open);
+
+        switch (open) {
+            case 0:
+                upBox.setChecked(false);
+                downBox.setChecked(false);
+
+                break;
+            case 1:
+                upBox.setChecked(true);
+                downBox.setChecked(false);
+
+                break;
+            case 2:
+                upBox.setChecked(false);
+                downBox.setChecked(true);
+                break;
+            case 3:
+                upBox.setChecked(true);
+                downBox.setChecked(true);
+                break;
+
+
+        }
+    }
+
 
     //判断email格式是否正确
     public boolean isEmail(String email) {

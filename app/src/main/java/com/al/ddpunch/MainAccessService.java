@@ -53,29 +53,15 @@ public class MainAccessService extends AccessibilityService {
             LogUtil.E("工作停止,请手动开启工作");
             return;
         }
-        int iscom = SharpData.getIsCompent(getApplicationContext());
         int order = SharpData.getOrderType(getApplicationContext());
 
-        if (event.getEventType() == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
-            if (order == 0) {
-                LogUtil.E("当前无任务");
-                return;
-            }
-            LogUtil.D("指令-->" + order);
-            if (iscom == 0 || iscom != order) {
-                new_work(order);
-            } else {
-                LogUtil.D("已打卡-->" + order);
-            }
+        new_work(order);
 
-
-        }
 
 
     }
 
     private void new_work(int order) {
-
 
 
         try {
@@ -128,6 +114,8 @@ public class MainAccessService extends AccessibilityService {
             if (!findResIdById(node, work_page_ResId)) {
                 throw new Exception("已进入主页,未找到工作页按钮节点");
             } else {
+                LogUtil.D("已进入工作页");
+
                 List<AccessibilityNodeInfo> list = node.findAccessibilityNodeInfosByViewId(work_page_ResId);
                 list.get(0).performAction(AccessibilityNodeInfo.ACTION_CLICK);
             }
@@ -139,7 +127,7 @@ public class MainAccessService extends AccessibilityService {
             List<AccessibilityNodeInfo> list = node.findAccessibilityNodeInfosByViewId(kaoqin_page_ResId);
             if (list != null || list.size() != 0) {
                 node = list.get(0);
-                if (node != null || node.getChildCount() >= 8) {
+                if (node != null && node.getChildCount() >= 8) {
                     node = node.getChild(7);
                     if (node != null) {  //已找到考勤打卡所在节点,进行点击操作
                         node.performAction(AccessibilityNodeInfo.ACTION_CLICK);
@@ -153,27 +141,30 @@ public class MainAccessService extends AccessibilityService {
                 throw new Exception("已进入工作页,但未找到相关节点");
             }
 
+
             node = refshPage();
 
-            int l=10;
-            while (l>0){
+            int l = 10;
+            while (l > 0) {
 
                 List<AccessibilityNodeInfo> list2 = node.findAccessibilityNodeInfosByViewId(webview_page_ResId);
-                if (list2 != null || list2.size() != 0) {
+                if (list2 != null && list2.size() != 0) {
+                    node=list2.get(0);
+                    LogUtil.D("确认已进入考勤打卡页面"+list2);
                     break;
                 }
                 l--;
-                node=refshPage();
+                node = refshPage();
                 sleepT(1000);
             }
 
-            if(l<=0){
+            if (l <= 0) {
                 throw new Exception("进入考勤打卡页面异常");
             }
-            LogUtil.D("确认已进入考勤打卡页面");
+
 
             //尝试打卡操作
-            int j = 2;
+            int j = 3;
             while (j >= 0) {
                 LogUtil.D("尝试打卡操作->" + j);
                 DoDaKa(order);
@@ -181,6 +172,8 @@ public class MainAccessService extends AccessibilityService {
                 sleepT(2000);
                 j--;
             }
+
+            AppCallBack();
 
             if (node != null) node.recycle();
         } catch (Exception e)
@@ -274,12 +267,12 @@ public class MainAccessService extends AccessibilityService {
         if (list == null) {
             list = new ArrayList<>();
         }
-        LogUtil.D("递归节点-->"+node+"---"+node.getChildCount());
+        LogUtil.D("递归节点-->" + node + "---" + node.getChildCount());
         if (node != null && node.getChildCount() != 0) {
             for (int i = 0; i < node.getChildCount(); i++) {
                 AccessibilityNodeInfo info = node.getChild(i);
                 if (info != null) {
-                    LogUtil.D("打卡节点数-"+info);
+                    LogUtil.D("打卡节点数-" + info);
                     list.add(info);
                     node = info;
 

@@ -7,13 +7,9 @@ package com.al.ddpunch;
 public class Comm {
 
     //间隔检查时间
-    public static final int  JugeTime=60*1000;
+    public static final int  JugeTime=10*1000;
 
-    //是否开启上班打卡
-    public static final boolean openupJob=true;
 
-    //是否开启下班打卡
-    public static final boolean opendownJob=true;
 
     //发送方邮箱
     public static final String EmailInfo="245545357@qq.com";
@@ -23,7 +19,7 @@ public class Comm {
     public static final  String[] upJobTime=new String[]{"09:00","09:20"};
 
     //下班打卡时间段,注意格式
-    public static final  String[] downJobTime=new String[]{"17:00","22:00"};
+    public static final  String[] downJobTime=new String[]{"19:00","19:20"};
 
     //钉钉包名
     public static final String dingding_PakeName="com.alibaba.android.rimet";

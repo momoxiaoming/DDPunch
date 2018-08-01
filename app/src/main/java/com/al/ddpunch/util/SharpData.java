@@ -18,6 +18,10 @@ public class SharpData {
     private static final String open_TYPE="open_type";
     private static final String email_adress="email_adress";
 
+    private static final String open_job="oepn_job";
+
+
+
 
     // 0默认什么不做,1为打上班卡,2为打下班卡
     //获取指令类型
@@ -77,4 +81,30 @@ public class SharpData {
         SharedPreferences sp=context.getSharedPreferences(spName,Context.MODE_PRIVATE);
         return sp.edit().putString(email_adress,order).commit();
     }
+
+
+
+    //存储邮箱
+    public static boolean setNotData(Context context,String order){
+        SharedPreferences sp=context.getSharedPreferences(spName,Context.MODE_PRIVATE);
+        return sp.edit().putString("notdata",order).commit();
+    }
+
+
+
+    //上班打卡开启状态,0,都关闭,1是上班,2是下班,3是上下班,
+    public static int getOpenJob(Context context){
+        SharedPreferences sp=context.getSharedPreferences(spName,Context.MODE_PRIVATE);
+        int order= sp.getInt(open_job,0);
+        return order;
+    }
+
+
+    //存储邮箱
+    public static boolean setOpenJob(Context context,int order){
+        SharedPreferences sp=context.getSharedPreferences(spName,Context.MODE_PRIVATE);
+        return sp.edit().putInt(open_job,order).commit();
+    }
+
+
 }

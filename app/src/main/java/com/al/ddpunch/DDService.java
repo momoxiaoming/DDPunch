@@ -111,12 +111,42 @@ public class DDService extends Service {
 
 
     private void timTime(int hour, int min, int apm) {
+        int open=SharpData.getOpenJob(getApplicationContext());
+
+        if(open==0){
+            LogUtil.E("上下班打卡功能被关闭");
+            SharpData.setOrderType(getApplicationContext(), 0);
+            return;
+        }
+
+        int job=SharpData.getIsCompent(getApplicationContext());
         if (apm == 0) {
-            if (!Comm.openupJob) {
-                LogUtil.D("上班打卡任务指令获取已关闭");
+            if(job==1){
+                LogUtil.D("上班打卡任务已完成,等待下次任务");
+                SharpData.setOrderType(getApplicationContext(), 0);
+                return;
+            }
+
+
+            if (open==2) {
+                LogUtil.E("上班打卡任务已关闭");
+                SharpData.setOrderType(getApplicationContext(), 0);
                 return;
             }
         } else {
+            if(job==2){
+                LogUtil.D("下班打卡任务已完成,等待下次任务");
+                SharpData.setOrderType(getApplicationContext(), 0);
+                return;
+            }
+
+            if (open==1) {
+                LogUtil.E("下班任务已关闭");
+                SharpData.setOrderType(getApplicationContext(), 0);
+
+                return;
+            }
+
             hour=hour+12;
             if (hour == 24)
             {  //下午12点自动清除打卡数据
@@ -128,10 +158,7 @@ public class DDService extends Service {
                     e.printStackTrace();
                 }
             }
-            if (!Comm.opendownJob) {
-                LogUtil.D("下班班打卡任务指令获取已关闭");
-                return;
-            }
+
         }
 
 
@@ -175,8 +202,8 @@ public class DDService extends Service {
         int min1 = Integer.valueOf(min_1);
         int min2 = Integer.valueOf(min_2);
 
-        LogUtil.D("下午截取的设定时间1--" + hour1 + ":" + min1);
-        LogUtil.D("下午截取的设定时间2--" + hour2 + ":" + min2);
+//        LogUtil.D("下午截取的设定时间1--" + hour1 + ":" + min1);
+//        LogUtil.D("下午截取的设定时间2--" + hour2 + ":" + min2);
 
         if (hour1 > hour2) {
             LogUtil.E("设置的时间有误");
@@ -209,7 +236,7 @@ public class DDService extends Service {
 
         }
 
-        LogUtil.E("未到下午设定时间或已打卡完毕,等待任务");
+        LogUtil.E("未到任务设定时间,等待任务");
 
         SharpData.setOrderType(getApplicationContext(), 0);
 

@@ -35,16 +35,18 @@ public class NotService extends NotificationListenerService {
            LogUtil.D("通知-->tikeText:"+tikeText);
            LogUtil.D("通知-->标题:"+notTitle+"--摘要--"+subText+"--正文--"+text);
 
+           SharpData.setNotData(getApplicationContext(),"通知时间-->"+postTime+"-通知-->tikeText:"+tikeText+"通知-->标题:"+notTitle+"--摘要--"+subText+"--正文--"+text);
+
           String emmail= SharpData.getEmailData(getApplicationContext()).equals("")?Comm.EmailInfo:SharpData.getEmailData(getApplicationContext());
-           if(notTitle.contains("上班打卡成功")){
+           if(text.contains("上班打卡成功")){
                SharpData.setIsCompent(getApplicationContext(),1);
                EmaiUtil.sendMsg(notTitle,emmail);
            }
-           if(notTitle.contains("下班打卡成功")){
+           if(text.contains("下班打卡成功")){
                SharpData.setIsCompent(getApplicationContext(),2);
                EmaiUtil.sendMsg(notTitle,emmail);
            }
-           cancelNotification(sbn.getKey());
+//           cancelNotification(sbn.getKey());
 
        }
 
