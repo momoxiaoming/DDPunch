@@ -16,7 +16,7 @@ public class Comm {
 
 
     //上班打卡时间段,一般20分钟间隔即可,注意格式
-    public static final  String[] upJobTime=new String[]{"09:00","09:20"};
+    public static final  String[] upJobTime=new String[]{"8:50","09:00"};
 
     //下班打卡时间段,注意格式
     public static final  String[] downJobTime=new String[]{"19:00","19:20"};

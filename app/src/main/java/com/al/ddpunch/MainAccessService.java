@@ -54,9 +54,11 @@ public class MainAccessService extends AccessibilityService {
             return;
         }
         int order = SharpData.getOrderType(getApplicationContext());
-
+        if (order == 0) {
+            LogUtil.E("当前无任务!");
+            return;
+        }
         new_work(order);
-
 
 
     }
@@ -149,8 +151,8 @@ public class MainAccessService extends AccessibilityService {
 
                 List<AccessibilityNodeInfo> list2 = node.findAccessibilityNodeInfosByViewId(webview_page_ResId);
                 if (list2 != null && list2.size() != 0) {
-                    node=list2.get(0);
-                    LogUtil.D("确认已进入考勤打卡页面"+list2);
+                    node = list2.get(0);
+                    LogUtil.D("确认已进入考勤打卡页面" + list2);
                     break;
                 }
                 l--;
