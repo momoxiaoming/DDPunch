@@ -113,11 +113,7 @@ public class DDService extends Service {
     private void timTime(int hour, int min, int apm) {
         int open=SharpData.getOpenJob(getApplicationContext());
 
-        if(open==0){
-            LogUtil.E("上下班打卡功能被关闭");
-            SharpData.setOrderType(getApplicationContext(), 0);
-            return;
-        }
+
 
         int job=SharpData.getIsCompent(getApplicationContext());
         if (apm == 0) {
@@ -127,6 +123,14 @@ public class DDService extends Service {
                 return;
             }
 
+            if(open==0){
+                LogUtil.E("上下班打卡功能被关闭");
+                SharpData.setOrderType(getApplicationContext(), 0);
+                return;
+            }
+
+
+
 
             if (open==2) {
                 LogUtil.E("上班打卡任务已关闭");
@@ -134,6 +138,24 @@ public class DDService extends Service {
                 return;
             }
         } else {
+
+            hour=hour+12;
+            if (hour == 23&&min==5)
+            {  //下午12点自动清除打卡数据
+                SharpData.setIsCompent(getApplicationContext(), 0);
+                try {
+                    Thread.sleep(5000);
+                    CMDUtil.doBoot(); //执行重启
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            if(open==0){
+                LogUtil.E("上下班打卡功能被关闭");
+                SharpData.setOrderType(getApplicationContext(), 0);
+                return;
+            }
+
             if(job==2){
                 LogUtil.D("下班打卡任务已完成,等待下次任务");
                 SharpData.setOrderType(getApplicationContext(), 0);
@@ -147,17 +169,7 @@ public class DDService extends Service {
                 return;
             }
 
-            hour=hour+12;
-            if (hour == 24)
-            {  //下午12点自动清除打卡数据
-                SharpData.setIsCompent(getApplicationContext(), 0);
-                try {
-                    Thread.sleep(5000);
-                    CMDUtil.doBoot(); //执行重启
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
+
 
         }
 
@@ -219,18 +231,22 @@ public class DDService extends Service {
         if (hour  >= hour1 && hour <= hour2) {
             if ((hour + 12) == hour1) { //等于最小
                 SharpData.setOrderType(getApplicationContext(), apm==0?1:2);
-                LogUtil.E("已到下午设定时间,开始任务");
+                sendAction();
+                LogUtil.E("已到设定时间,开始任务");
                 return;
             } else if (hour == hour2) { //等于最大
                 //比较分钟
                 if (min <= min2) {
                     SharpData.setOrderType(getApplicationContext(), apm==0?1:2);
-                    LogUtil.E("已到下午设定时间,开始任务");
+                    LogUtil.E("已到设定时间,开始任务");
+                    sendAction();
+
                     return;
                 }
             } else {  //在两个之间
                 SharpData.setOrderType(getApplicationContext(), apm==0?1:2);
-                LogUtil.E("已到下午设定时间,开始任务");
+                LogUtil.E("已到设定时间,开始任务");
+                sendAction();
                 return;
             }
 
@@ -245,4 +261,10 @@ public class DDService extends Service {
 
     }
 
+
+    //发送一个动作
+    private void sendAction(){
+        Intent intent=new Intent(getApplicationContext(),MainAccessService.class);
+        startService(intent);
+    }
 }

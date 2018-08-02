@@ -26,7 +26,10 @@ public class NotService extends NotificationListenerService {
        if(pake!=null&&Comm.dingding_PakeName.equals(pake)){
            //拿到钉钉的通知消息
            Notification notification= sbn.getNotification();
-           String tikeText=notification.tickerText.toString();
+           if(notification==null){
+               return;
+           }
+           String tikeText=notification.tickerText==null?"":notification.tickerText.toString();
            String notTitle=notification.extras.getString("android.title");//标题
            String subText=notification.extras.getString("android.subText");//摘要
            String text=notification.extras.getString("android.text");  //正文
@@ -40,11 +43,11 @@ public class NotService extends NotificationListenerService {
           String emmail= SharpData.getEmailData(getApplicationContext()).equals("")?Comm.EmailInfo:SharpData.getEmailData(getApplicationContext());
            if(text.contains("上班打卡成功")){
                SharpData.setIsCompent(getApplicationContext(),1);
-               EmaiUtil.sendMsg(notTitle,emmail);
+               EmaiUtil.sendMsg(text,emmail);
            }
            if(text.contains("下班打卡成功")){
                SharpData.setIsCompent(getApplicationContext(),2);
-               EmaiUtil.sendMsg(notTitle,emmail);
+               EmaiUtil.sendMsg(text,emmail);
            }
 //           cancelNotification(sbn.getKey());
 

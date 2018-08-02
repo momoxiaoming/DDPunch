@@ -42,6 +42,16 @@ public class MainAccessService extends AccessibilityService {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        if (SharpData.getOpenApp(getApplicationContext()) == 1) {
+            LogUtil.E("工作停止,请手动开启工作");
+            return super.onStartCommand(intent, flags, startId);
+        }
+        int order = SharpData.getOrderType(getApplicationContext());
+        if (order == 0) {
+            LogUtil.E("当前无任务!");
+            return super.onStartCommand(intent, flags, startId);
+        }
+        new_work(order);
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -49,16 +59,7 @@ public class MainAccessService extends AccessibilityService {
     public void onAccessibilityEvent(AccessibilityEvent event) {
 
 
-        if (SharpData.getOpenApp(getApplicationContext()) == 1) {
-            LogUtil.E("工作停止,请手动开启工作");
-            return;
-        }
-        int order = SharpData.getOrderType(getApplicationContext());
-        if (order == 0) {
-            LogUtil.E("当前无任务!");
-            return;
-        }
-        new_work(order);
+
 
 
     }
@@ -70,6 +71,7 @@ public class MainAccessService extends AccessibilityService {
             //脚本初始化,判断是否在主页
             AccessibilityNodeInfo node = refshPage();
             if (node == null || !Comm.launcher_PakeName.equals(node.getPackageName().toString())) {
+
                 throw new Exception("程序不在初始化启动器页面,抛出异常");
             }
             int m = 10;
@@ -182,7 +184,11 @@ public class MainAccessService extends AccessibilityService {
 
         {
             LogUtil.E(e.getMessage());
+            if(e.getMessage().equals("进入考勤打卡页面异常")){
+                //估计卡住了,杀死进程
 
+                CMDUtil.stopProcess(getRootInActiveWindow().getPackageName().toString());
+            }
             //执行回退操作
             AppCallBack();
         }
@@ -247,6 +253,9 @@ public class MainAccessService extends AccessibilityService {
             }
             LogUtil.D("执行回退操作");
             performGlobalAction(AccessibilityService.GLOBAL_ACTION_BACK);
+            if(node!=null){
+                LogUtil.E("当前包名-"+node.getPackageName());
+            }
             if (node != null && Comm.launcher_PakeName.equals(node.getPackageName().toString())) {
                 //已回退到启动页,退出循环
                 LogUtil.D("已回到初始页");

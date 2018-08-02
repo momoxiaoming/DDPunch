@@ -7,7 +7,7 @@ package com.al.ddpunch;
 public class Comm {
 
     //间隔检查时间
-    public static final int  JugeTime=10*1000;
+    public static final int  JugeTime=30*1000;
 
 
 
@@ -16,7 +16,7 @@ public class Comm {
 
 
     //上班打卡时间段,一般20分钟间隔即可,注意格式
-    public static final  String[] upJobTime=new String[]{"8:50","09:00"};
+    public static final  String[] upJobTime=new String[]{"08:50","09:00"};
 
     //下班打卡时间段,注意格式
     public static final  String[] downJobTime=new String[]{"19:00","19:20"};
