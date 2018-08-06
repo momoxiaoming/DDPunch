@@ -34,6 +34,8 @@ public class MainAccessService extends AccessibilityService {
     public static String kaoqin_page_ResId = "com.alibaba.android.rimet:id/oa_fragment_gridview";
 
 
+    public static boolean isSyn = true;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -42,31 +44,37 @@ public class MainAccessService extends AccessibilityService {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (SharpData.getOpenApp(getApplicationContext()) == 1) {
-            LogUtil.E("工作停止,请手动开启工作");
-            return super.onStartCommand(intent, flags, startId);
-        }
-        int order = SharpData.getOrderType(getApplicationContext());
-        if (order == 0) {
-            LogUtil.E("当前无任务!");
-            return super.onStartCommand(intent, flags, startId);
-        }
-        new_work(order);
+
+        startCSer();
         return super.onStartCommand(intent, flags, startId);
     }
 
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {
 
+    }
 
+    private void startCSer() {
+        synchronized (MainAccessService.class) {
+            if (SharpData.getOpenApp(getApplicationContext()) == 1) {
+                LogUtil.E("工作停止,请手动开启工作");
+                return;
+            }
+            int order = SharpData.getOrderType(getApplicationContext());
+            if (order == 0) {
+                LogUtil.E("当前无任务!");
+                return;
+            }
 
+            new_work(order);
+        }
 
 
     }
 
     private void new_work(int order) {
 
-
+        isSyn = true;
         try {
             //脚本初始化,判断是否在主页
             AccessibilityNodeInfo node = refshPage();
@@ -97,7 +105,7 @@ public class MainAccessService extends AccessibilityService {
             }
             sleepT(1000);
 
-            int k = 10;
+            int k = 5;
             while (k > 0) {
                 //确认进入钉钉主页
                 if (findResIdById(node, main_page_ResId)) {
@@ -165,7 +173,7 @@ public class MainAccessService extends AccessibilityService {
             if (l <= 0) {
                 throw new Exception("进入考勤打卡页面异常");
             }
-
+            sleepT(4000);
 
             //尝试打卡操作
             int j = 3;
@@ -184,13 +192,14 @@ public class MainAccessService extends AccessibilityService {
 
         {
             LogUtil.E(e.getMessage());
-            if(e.getMessage().equals("进入考勤打卡页面异常")){
+            if (e.getMessage().equals("进入考勤打卡页面异常")) {
                 //估计卡住了,杀死进程
 
                 CMDUtil.stopProcess(getRootInActiveWindow().getPackageName().toString());
             }
             //执行回退操作
             AppCallBack();
+
         }
 
     }
@@ -236,25 +245,22 @@ public class MainAccessService extends AccessibilityService {
     //程序异常时的操作方法
     private void AppCallBack() {
         int i = 10;
+        AccessibilityNodeInfo node = getRootInActiveWindow();
+
         while (true) {
-            //执行回退操作
-            AccessibilityNodeInfo node = refshPage();
+            LogUtil.D(" getWindows()--" + getWindows());
 
-            if (i < 0) {
-                //说明可能卡住了,无法回退,强行停止程序进程
-                if (node != null) {
-                    CMDUtil.stopProcess(node.getPackageName().toString());
 
-                } else {
-                    performGlobalAction(AccessibilityService.GLOBAL_ACTION_HOME);
-
-                }
+            if (i == 0) {
+                //有毒,直接重启手机
+                CMDUtil.stopProcess(Comm.dingding_PakeName);
                 break;
             }
-            LogUtil.D("执行回退操作");
+
+            LogUtil.D("执行回退操作" + i);
             performGlobalAction(AccessibilityService.GLOBAL_ACTION_BACK);
-            if(node!=null){
-                LogUtil.E("当前包名-"+node.getPackageName());
+            if (node != null) {
+                LogUtil.E("当前包名-" + node.getPackageName());
             }
             if (node != null && Comm.launcher_PakeName.equals(node.getPackageName().toString())) {
                 //已回退到启动页,退出循环
@@ -262,8 +268,13 @@ public class MainAccessService extends AccessibilityService {
                 break;
             }
             i--;
-            sleepT(2000); //睡眠一秒
+
+            sleepT(1000); //睡眠一秒
+            node = refshPage();
         }
+
+        if (node != null)
+            node.recycle();
 
     }
 

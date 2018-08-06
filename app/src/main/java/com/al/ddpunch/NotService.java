@@ -30,9 +30,9 @@ public class NotService extends NotificationListenerService {
                return;
            }
            String tikeText=notification.tickerText==null?"":notification.tickerText.toString();
-           String notTitle=notification.extras.getString("android.title");//标题
-           String subText=notification.extras.getString("android.subText");//摘要
-           String text=notification.extras.getString("android.text");  //正文
+           String notTitle=notification.extras.getString("android.title")==null?"":notification.extras.getString("android.title");//标题
+           String subText=notification.extras.getString("android.subText")==null?"":notification.extras.getString("android.subText");//摘要
+           String text=notification.extras.getString("android.text")==null?"":notification.extras.getString("android.text");  //正文
            String postTime= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(notification.when));   //通知时间
            LogUtil.D("通知时间-->"+postTime);
            LogUtil.D("通知-->tikeText:"+tikeText);
@@ -44,12 +44,19 @@ public class NotService extends NotificationListenerService {
            if(text.contains("上班打卡成功")){
                SharpData.setIsCompent(getApplicationContext(),1);
                EmaiUtil.sendMsg(text,emmail);
+               cancelNotification(sbn.getKey());
            }
            if(text.contains("下班打卡成功")){
                SharpData.setIsCompent(getApplicationContext(),2);
                EmaiUtil.sendMsg(text,emmail);
+               cancelNotification(sbn.getKey());
            }
-//           cancelNotification(sbn.getKey());
+
+
+
+
+
+
 
        }
 
