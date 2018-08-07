@@ -3,6 +3,8 @@ package com.al.ddpunch.util;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.al.ddpunch.Comm;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -24,6 +26,11 @@ public class SharpData {
     private static final String open_job = "oepn_job";
     private static final String reset_sys = "reset_sys";
     private static final String reset_sys_day = "reset_sys_day";
+
+
+    private static final String dd_up_time = "dd_up_time";
+
+    private static final String dd_down_time = "dd_down_time";
 
 
     // 0默认什么不做,1为打上班卡,2为打下班卡
@@ -116,7 +123,7 @@ public class SharpData {
         String sys_dat = sp.getString(reset_sys_day, "");
         String s = new SimpleDateFormat("dd").format(new Date(System.currentTimeMillis()));
 
-        LogUtil.D("当天日期-->"+s+"--存储日期-->"+sys_dat);
+        LogUtil.D("当天日期-->" + s + "--存储日期-->" + sys_dat);
         if (s.equals(sys_dat)) {
             //判断为当天
             if (order == 0) {
@@ -143,5 +150,34 @@ public class SharpData {
         return editor.commit();
     }
 
+
+    //存储上班时间
+    public static String getDDupTime(Context context) {
+        SharedPreferences sp = context.getSharedPreferences(spName, Context.MODE_PRIVATE);
+        String order = sp.getString(dd_up_time, Comm.upJobTime);
+        return order;
+    }
+
+
+    //存储上班时间
+    public static boolean setDDupTime(Context context, String order) {
+        SharedPreferences sp = context.getSharedPreferences(spName, Context.MODE_PRIVATE);
+        return sp.edit().putString(dd_up_time, order).commit();
+    }
+
+
+    //存储下班时间
+    public static String getDDdownTime(Context context) {
+        SharedPreferences sp = context.getSharedPreferences(spName, Context.MODE_PRIVATE);
+        String order = sp.getString(dd_down_time, Comm.downJobTime);
+        return order;
+    }
+
+
+    //存储下班时间
+    public static boolean setDDdownTime(Context context, String order) {
+        SharedPreferences sp = context.getSharedPreferences(spName, Context.MODE_PRIVATE);
+        return sp.edit().putString(dd_down_time, order).commit();
+    }
 
 }

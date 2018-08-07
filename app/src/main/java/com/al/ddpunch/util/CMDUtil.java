@@ -39,7 +39,7 @@ public class CMDUtil {
     /**
      * 执行命令但不关注结果输出
      */
-    private static int execRootCmdSilent(String cmd) {
+    public static int execRootCmdSilent(String cmd) {
         int result = -1;
         DataOutputStream dos = null;
 

@@ -5,12 +5,24 @@
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
-	android:orientation="vertical"
-	tools:context="com.al.ddpunch.MainActivity">
+	android:orientation="vertical" tools:context="com.al.ddpunch.MainActivity">
 
 
-	<TextView android:id="@+id/version_text" android:layout_width="wrap_content" android:layout_height="wrap_content"
+	<TextView android:id="@+id/version_text" android:layout_gravity="center" android:layout_width="wrap_content" android:layout_height="wrap_content"
 			  android:padding="5dp" android:text="版本号"/>
+	<TextView  android:id="@+id/time_text"
+			   android:layout_gravity="center"
+			   android:layout_width="wrap_content"
+			   android:layout_height="wrap_content"
+			  android:padding="5dp"
+			   android:textColor="@android:color/holo_red_light" />
+	<TextView android:id="@+id/time_text2"
+			  android:textColor="@android:color/holo_red_light"
+			  android:layout_gravity="center"
+			  android:layout_width="wrap_content"
+			  android:layout_height="wrap_content"
+			  android:padding="5dp" />
+
 
 	<LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
 				  android:orientation="horizontal" android:padding="10dp">
@@ -22,6 +34,27 @@
 				android:layout_weight="2"
 				android:text="设置邮箱"/>
 	</LinearLayout>
+
+
+
+	<LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+				  android:orientation="vertical" android:padding="10dp">
+		<LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content">
+
+			<CheckBox android:id="@+id/upJob_btn" android:layout_width="match_parent" android:layout_height="wrap_content"
+					  android:layout_weight="1" android:text="上班打卡"/>
+
+			<CheckBox android:id="@+id/downJob_btn" android:layout_width="match_parent" android:layout_height="wrap_content"
+					  android:layout_weight="1" android:text="下班打卡"/>
+		</LinearLayout>
+		<LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content">
+
+
+		</LinearLayout>
+	</LinearLayout>
+
+
+
 	<Button android:id="@+id/email_work" android:layout_width="match_parent" android:layout_height="wrap_content"
 			android:text="测试邮件发送"/>
 	<Button android:id="@+id/start_work" android:layout_width="match_parent" android:layout_height="wrap_content"
@@ -30,7 +63,8 @@
 			android:text="停止工作"/>
 
 
-	<TextView android:layout_marginTop="10dp" android:textColor="@android:color/holo_red_dark" android:layout_width="wrap_content" android:layout_height="wrap_content"
-			  android:text="注意:本应用需要打开辅助功能和通知功能,否者程序功能无法正常使用"/>
+	<TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+			  android:layout_marginTop="10dp" android:text="注意:本应用需要打开辅助功能和通知功能,否者程序功能无法正常使用,时间设定后,软件将会在设定时间开始运行,最长运行20分钟!"
+			  android:textColor="@android:color/holo_red_dark"/>
 
 </LinearLayout>

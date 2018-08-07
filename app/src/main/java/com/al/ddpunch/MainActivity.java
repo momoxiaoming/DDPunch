@@ -1,5 +1,7 @@
 package com.al.ddpunch;
 
+import android.app.Dialog;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
@@ -14,9 +16,11 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.al.ddpunch.email.EmaiUtil;
+import com.al.ddpunch.util.CMDUtil;
 import com.al.ddpunch.util.LogUtil;
 import com.al.ddpunch.util.SharpData;
 
@@ -28,17 +32,17 @@ public class MainActivity extends AppCompatActivity {
 
     private CheckBox upBox, downBox;
 
+    private TextView timeText, timeText2;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         upBox = findViewById(R.id.upJob_btn);
         downBox = findViewById(R.id.downJob_btn);
-        TextView timeText = findViewById(R.id.time_text);
-        TextView timeText2 = findViewById(R.id.time_text2);
-
-        timeText.setText("上班打卡时间段:"+Comm.upJobTime[0]+"-"+Comm.upJobTime[1]);
-        timeText2.setText("下班打卡时间段:"+Comm.downJobTime[0]+"-"+Comm.downJobTime[1]);
+        timeText = findViewById(R.id.time_text);
+        timeText2 = findViewById(R.id.time_text2);
 
 
         TextView text = findViewById(R.id.version_text);
@@ -47,10 +51,17 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.start_work).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startService(new Intent(getApplicationContext(), DDService.class));
-                startService(new Intent(getApplicationContext(), MainAccessService.class));
-                SharpData.setOpenApp(getApplicationContext(), 0);
-                finish();
+                if(CMDUtil.execRootCmdSilent("echo test")!=-1){
+                    Toast.makeText(MainActivity.this,"手机已root",Toast.LENGTH_SHORT).show();
+                    startService(new Intent(getApplicationContext(), DDService.class));
+                    startService(new Intent(getApplicationContext(), MainAccessService.class));
+                    SharpData.setOpenApp(getApplicationContext(), 0);
+                    finish();
+                }else{
+                    Toast.makeText(MainActivity.this,"请开启root权限再重试!",Toast.LENGTH_SHORT).show();
+
+                }
+
 
 
             }
@@ -144,9 +155,77 @@ public class MainActivity extends AppCompatActivity {
                 } else if (open == 3) {
                     SharpData.setOpenJob(getApplicationContext(), isChecked ? 3 : 1);
                 }
+
+
             }
         });
 
+        timeText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setDialog(1);
+            }
+        });
+
+        timeText2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setDialog(2);
+            }
+        });
+
+        setinitData();
+
+
+
+    }
+
+
+    public void setDialog(final int flg) {
+
+
+        Dialog dialog = new TimePickerDialog(MainActivity.this, new TimePickerDialog.OnTimeSetListener() {
+
+
+            @Override
+            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                String min = "";
+                String hour = "";
+                if (minute < 10) {
+                    min = "0" + minute;
+                } else {
+                    min = "" + minute;
+                }
+                if (hourOfDay < 10) {
+                    hour = "0" + hourOfDay;
+                } else {
+                    hour = "" + hourOfDay;
+                }
+
+
+                String str = hour + ":" + min;
+                if (flg == 1) {
+                    SharpData.setDDupTime(getApplicationContext(), str);
+                } else {
+                    SharpData.setDDdownTime(getApplicationContext(), str);
+                }
+
+                setinitData();
+
+            }
+        }, 0, 0, true);
+        dialog.show();
+
+
+    }
+
+
+    private void setinitData() {
+        String up = SharpData.getDDupTime(getApplicationContext());
+        String down = SharpData.getDDdownTime(getApplicationContext());
+
+        timeText.setText("上班打卡时间:" + up);
+        timeText2.setText("下班打卡时间:" + down);
     }
 
     private void setCheck() {

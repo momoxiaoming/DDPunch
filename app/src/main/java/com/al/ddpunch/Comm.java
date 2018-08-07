@@ -15,11 +15,15 @@ public class Comm {
     public static final String EmailInfo="245545357@qq.com";
 
 
-    //上班打卡时间段,一般20分钟间隔即可,注意格式
-    public static final  String[] upJobTime=new String[]{"08:40","09:00"};
 
-    //下班打卡时间段,注意格式
-    public static final  String[] downJobTime=new String[]{"19:00","19:20"};
+    //默认最大运行时间
+    public static final long temp_time=20*60*1000;
+
+    //默认上班打卡时间
+    public static final  String upJobTime="08:40";
+
+    //默认下班打卡时间
+    public static final  String downJobTime="19:00";
 
     //钉钉包名
     public static final String dingding_PakeName="com.alibaba.android.rimet";
