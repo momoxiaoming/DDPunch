@@ -31,6 +31,9 @@ public class SharpData {
     private static final String dd_up_time = "dd_up_time";
 
     private static final String dd_down_time = "dd_down_time";
+    private static final String Heightmetrics = "Heightmetrics";
+
+    private static final String widthmetrics = "widthmetrics";
 
 
     // 0默认什么不做,1为打上班卡,2为打下班卡
@@ -180,4 +183,30 @@ public class SharpData {
         return sp.edit().putString(dd_down_time, order).commit();
     }
 
+
+    //获取屏幕高度
+    public static int getHeightmetrics(Context context) {
+        SharedPreferences sp = context.getSharedPreferences(spName, Context.MODE_PRIVATE);
+        int order = sp.getInt(Heightmetrics, Comm.heightmetrics_defult);
+        return order;
+    }
+
+
+    public static boolean setHeightmetrics(Context context, int order) {
+        SharedPreferences sp = context.getSharedPreferences(spName, Context.MODE_PRIVATE);
+        return sp.edit().putInt(Heightmetrics, order).commit();
+    }
+
+    //获取屏幕宽度
+    public static int getWidthmetrics(Context context) {
+        SharedPreferences sp = context.getSharedPreferences(spName, Context.MODE_PRIVATE);
+        int order = sp.getInt(widthmetrics, Comm.widthmetrics_defult);
+        return order;
+    }
+
+
+    public static boolean setWidthmetrics(Context context, int order) {
+        SharedPreferences sp = context.getSharedPreferences(spName, Context.MODE_PRIVATE);
+        return sp.edit().putInt(widthmetrics, order).commit();
+    }
 }

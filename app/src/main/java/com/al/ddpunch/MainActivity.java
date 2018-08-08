@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -43,6 +44,10 @@ public class MainActivity extends AppCompatActivity {
         downBox = findViewById(R.id.downJob_btn);
         timeText = findViewById(R.id.time_text);
         timeText2 = findViewById(R.id.time_text2);
+
+
+
+
 
 
         TextView text = findViewById(R.id.version_text);
@@ -226,6 +231,17 @@ public class MainActivity extends AppCompatActivity {
 
         timeText.setText("上班打卡时间:" + up);
         timeText2.setText("下班打卡时间:" + down);
+
+
+        DisplayMetrics metrics=new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        int widthPixels=metrics.widthPixels;
+        int heightPixels=metrics.heightPixels;
+
+        SharpData.setHeightmetrics(getApplicationContext(),heightPixels);
+        SharpData.setWidthmetrics(getApplicationContext(),widthPixels);
+        LogUtil.D("heightPixels:"+heightPixels+"----widthPixels:"+widthPixels);
+
     }
 
     private void setCheck() {

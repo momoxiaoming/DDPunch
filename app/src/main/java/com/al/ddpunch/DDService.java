@@ -121,20 +121,20 @@ public class DDService extends Service {
                     return;
                 }
 
-                LogUtil.D("今日已重启时间-->"+reset_time);
+                LogUtil.D("今日已重启时间-->" + reset_time);
 
             }
 
 
-
-
             //上班时间段
-            long up_time_1 = new SimpleDateFormat("HH:mm").parse(SharpData.getDDupTime(getApplicationContext())).getTime();
-            long up_time_2 = up_time_1+Comm.temp_time;
+            long up_time_1 = new SimpleDateFormat("HH:mm").parse(SharpData.getDDupTime(getApplicationContext()))
+                    .getTime();
+            long up_time_2 = up_time_1 + Comm.temp_time;
 
             //下班时间段
-            long down_time_1 = new SimpleDateFormat("HH:mm").parse(SharpData.getDDdownTime(getApplicationContext())).getTime();
-            long down_time_2 = down_time_1+Comm.temp_time;
+            long down_time_1 = new SimpleDateFormat("HH:mm").parse(SharpData.getDDdownTime(getApplicationContext()))
+                    .getTime();
+            long down_time_2 = down_time_1 + Comm.temp_time;
 
 
             LogUtil.D("当前时间-->" + now_time + "上班时间-->" + up_time_1 + "-" + up_time_2 + " 下班时间-" + down_time_1 + "-" +
@@ -223,15 +223,11 @@ public class DDService extends Service {
     }
 
 
-
-
-
     //发送一个动作
     private void sendAction() {
         Intent intent = new Intent(getApplicationContext(), MainAccessService.class);
         startService(intent);
     }
-
 
 
 }

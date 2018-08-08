@@ -1,17 +1,22 @@
 package com.al.ddpunch;
 
 import android.accessibilityservice.AccessibilityService;
+import android.app.Notification;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Parcelable;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 
+import com.al.ddpunch.email.EmaiUtil;
 import com.al.ddpunch.util.CMDUtil;
 import com.al.ddpunch.util.LogUtil;
 import com.al.ddpunch.util.SharpData;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -51,6 +56,8 @@ public class MainAccessService extends AccessibilityService {
 
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {
+        jumpNot(event);
+
 
     }
 
@@ -72,13 +79,65 @@ public class MainAccessService extends AccessibilityService {
 
     }
 
+    public void jumpNot(AccessibilityEvent event) {
+        if (event.getEventType() == AccessibilityEvent.TYPE_NOTIFICATION_STATE_CHANGED) {
+
+            //获取Parcelable对象
+            Parcelable data = event.getParcelableData();
+            if (data == null) {
+                return;
+            }
+            //判断是否是Notification对象
+            if (data instanceof Notification) {
+
+                Notification notification = (Notification) data;
+
+                String tikeText = notification.tickerText == null ? "" : notification.tickerText.toString();
+                String notTitle = notification.extras.getString("android.title") == null ? "" : notification.extras
+                        .getString("android.title");//标题
+                String subText = notification.extras.getString("android.subText") == null ? "" : notification.extras
+                        .getString("android.subText");//摘要
+                String text = notification.extras.getString("android.text") == null ? "" : notification.extras
+                        .getString("android.text");  //正文
+                String postTime = new SimpleDateFormat("yyyy-MM-dd").format(new Date(notification.when));   //通知时间
+                LogUtil.D("通知时间-->" + postTime);
+                LogUtil.D("通知-->tikeText:" + tikeText);
+                LogUtil.D("通知-->标题:" + notTitle + "--摘要--" + subText + "--正文--" + text);
+
+                SharpData.setNotData(getApplicationContext(), "通知时间-->" + postTime + "-通知-->tikeText:" + tikeText +
+                        "通知-->标题:" + notTitle + "--摘要--" + subText + "--正文--" + text);
+
+                String emmail = SharpData.getEmailData(getApplicationContext()).equals("") ? Comm.EmailInfo :
+                        SharpData.getEmailData(getApplicationContext());
+
+                //首先判断通知时间是不是当前时间
+                String nowTime = new SimpleDateFormat("yyyy-MM-dd").format(System.currentTimeMillis());
+
+                //如果是当天
+                if (nowTime.equals(postTime)) {
+                    if (text.contains("上班打卡成功")) {
+                        SharpData.setIsCompent(getApplicationContext(), 1);
+                        EmaiUtil.sendMsg(text, emmail);
+                    }
+                    if (text.contains("下班打卡成功")) {
+                        SharpData.setIsCompent(getApplicationContext(), 2);
+                        EmaiUtil.sendMsg(text, emmail);
+
+                    }
+                }
+
+
+            }
+        }
+    }
+
     private void new_work(int order) {
 
         isSyn = true;
         try {
             //脚本初始化,判断是否在主页
             AccessibilityNodeInfo node = refshPage();
-            if (node == null || !Comm.launcher_PakeName.equals(node.getPackageName().toString())) {
+            if (node == null || !isStartActivity(node.getPackageName().toString())) {
 
                 throw new Exception("程序不在初始化启动器页面,抛出异常");
             }
@@ -191,12 +250,16 @@ public class MainAccessService extends AccessibilityService {
         } catch (Exception e)
 
         {
-            LogUtil.E(e.getMessage());
-            if (e.getMessage().equals("进入考勤打卡页面异常")) {
-                //估计卡住了,杀死进程
+            if (e != null) {
+                String msg = e.getMessage() == null ? "" : e.getMessage();
+                LogUtil.E(msg + "");
+                if (msg.equals("进入考勤打卡页面异常")) {
+                    //估计卡住了,杀死进程
 
-                CMDUtil.stopProcess(getRootInActiveWindow().getPackageName().toString());
+                    CMDUtil.stopProcess(getRootInActiveWindow().getPackageName().toString());
+                }
             }
+
             //执行回退操作
             AppCallBack();
 
@@ -206,13 +269,51 @@ public class MainAccessService extends AccessibilityService {
 
 
     private void DoDaKa(int order) {
+
+        int heightPixels = SharpData.getHeightmetrics(getApplicationContext());
+        int widthPixels = SharpData.getWidthmetrics(getApplicationContext());
+        LogUtil.D("heightPixels:"+heightPixels+"----widthPixels:"+widthPixels);
+
+        double t_x ;
+        double t_y ;
+
+        double b_x ;
+        double b_y ;
+
+        if (widthPixels == Comm.widthmetrics_defult) {
+            t_x = 240;
+            b_x = 262;
+        } else {
+            t_x = ((float)240 / Comm.widthmetrics_defult) * widthPixels;
+            b_x = ((float)262 / Comm.widthmetrics_defult)* widthPixels;
+        }
+
+        if (heightPixels == Comm.heightmetrics_defult) {
+            t_y = 314;
+            b_y = 556;
+        } else {
+            t_y = ((float)314 / Comm.heightmetrics_defult) * heightPixels;
+            b_y = ((float)556 / Comm.heightmetrics_defult) * heightPixels;
+        }
+
+
+        int t_x_i= (int) t_x;
+        int t_y_i= (int) t_y;
+        int b_x_i= (int) b_x;
+        int b_y_i= (int) b_y;
+
+        LogUtil.D("t_x:"+t_x_i+"----t_y:"+t_y_i);
+        LogUtil.D("b_x:"+b_x_i+"----b_y:"+b_y_i);
+
+
         if (order == 1) {
             //上班打卡
-            CMDUtil.ClickXy("240", "314");
+            CMDUtil.ClickXy(t_x_i+"", t_y_i+"");
         } else if (order == 2) {
             //下班卡
-            CMDUtil.ClickXy("262", "556");
+            CMDUtil.ClickXy(b_x_i+"", b_y_i+"");
         }
+
 
         //检查是否打卡成功
 //       ;
@@ -248,8 +349,6 @@ public class MainAccessService extends AccessibilityService {
         AccessibilityNodeInfo node = getRootInActiveWindow();
 
         while (true) {
-            LogUtil.D(" getWindows()--" + getWindows());
-
 
             if (i == 0) {
                 //有毒,直接重启手机
@@ -262,7 +361,7 @@ public class MainAccessService extends AccessibilityService {
             if (node != null) {
                 LogUtil.E("当前包名-" + node.getPackageName());
             }
-            if (node != null && Comm.launcher_PakeName.equals(node.getPackageName().toString())) {
+            if (node != null && isStartActivity(node.getPackageName().toString())) {
                 //已回退到启动页,退出循环
                 LogUtil.D("已回到初始页");
                 break;
@@ -278,6 +377,14 @@ public class MainAccessService extends AccessibilityService {
 
     }
 
+
+    public boolean isStartActivity(String page) {
+        if (Comm.launcher_PakeName.equals(page) || Comm
+                .launcher_PakeName2.equals(page)) {
+            return true;
+        }
+        return false;
+    }
 
     //刷新节点
     private AccessibilityNodeInfo refshPage() {
