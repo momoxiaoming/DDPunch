@@ -80,7 +80,8 @@ public class MainAccessService extends AccessibilityService {
     }
 
     public void jumpNot(AccessibilityEvent event) {
-        if (event.getEventType() == AccessibilityEvent.TYPE_NOTIFICATION_STATE_CHANGED) {
+//        LogUtil.D("event->"+event);
+        if (event.getEventType() == AccessibilityEvent.TYPE_NOTIFICATION_STATE_CHANGED&&event.getPackageName().equals(Comm.dingding_PakeName)) {
 
             //获取Parcelable对象
             Parcelable data = event.getParcelableData();
@@ -117,11 +118,11 @@ public class MainAccessService extends AccessibilityService {
                 if (nowTime.equals(postTime)) {
                     if (text.contains("上班打卡成功")) {
                         SharpData.setIsCompent(getApplicationContext(), 1);
-                        EmaiUtil.sendMsg(text, emmail);
+                        EmaiUtil.sendMsg("服务通知1:"+text, emmail);
                     }
                     if (text.contains("下班打卡成功")) {
                         SharpData.setIsCompent(getApplicationContext(), 2);
-                        EmaiUtil.sendMsg(text, emmail);
+                        EmaiUtil.sendMsg("服务通知1:"+text, emmail);
 
                     }
                 }
