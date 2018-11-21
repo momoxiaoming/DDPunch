@@ -101,6 +101,7 @@ public class MainAccessService extends AccessibilityService {
                 String text = notification.extras.getString("android.text") == null ? "" : notification.extras
                         .getString("android.text");  //正文
                 String postTime = new SimpleDateFormat("yyyy-MM-dd").format(new Date(notification.when));   //通知时间
+
                 LogUtil.D("通知时间-->" + postTime);
                 LogUtil.D("通知-->tikeText:" + tikeText);
                 LogUtil.D("通知-->标题:" + notTitle + "--摘要--" + subText + "--正文--" + text);

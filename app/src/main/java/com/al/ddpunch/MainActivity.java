@@ -24,6 +24,7 @@ import com.al.ddpunch.email.EmaiUtil;
 import com.al.ddpunch.util.CMDUtil;
 import com.al.ddpunch.util.LogUtil;
 import com.al.ddpunch.util.SharpData;
+import com.al.ddpunch.util.SystemUtil;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -240,7 +241,13 @@ public class MainActivity extends AppCompatActivity {
 
         SharpData.setHeightmetrics(getApplicationContext(),heightPixels);
         SharpData.setWidthmetrics(getApplicationContext(),widthPixels);
+
+
+
         LogUtil.D("heightPixels:"+heightPixels+"----widthPixels:"+widthPixels);
+
+
+        LogUtil.D("手机型号-->"+SystemUtil.getSystemModel());
 
     }
 
@@ -293,11 +300,16 @@ public class MainActivity extends AppCompatActivity {
                     .getPackageManager()
                     .getPackageInfo(ctx.getPackageName(), 0);
             localVersion = packageInfo.versionName;
-        } catch (PackageManager.NameNotFoundException e) {
+
+
+
+         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
         return localVersion;
     }
+
+
 
 
     private void openAccessSettingOn() {

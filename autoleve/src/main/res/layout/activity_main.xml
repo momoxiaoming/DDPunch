@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:orientation="vertical"
+	android:padding="10dp"
+	tools:context="com.al.autoleve.MainActivity">
+
+	<TextView android:id="@+id/version_text"
+			  android:layout_width="match_parent"
+			  android:layout_height="wrap_content"
+			  android:gravity="center"
+			  android:text="版本号:5.1"/>
+
+	<LinearLayout android:layout_width="match_parent"
+				  android:layout_height="wrap_content"
+				  android:layout_marginTop="10dp"
+				  android:gravity="center"
+				  android:orientation="horizontal">
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:gravity="center"
+			android:text="设备码: "
+			android:textColor="@android:color/holo_green_dark"
+			android:textSize="16sp"/>
+		<TextView
+			android:id="@+id/token_text"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:gravity="center"
+			android:text="程序注册成功即可获取"
+			android:textColor="@android:color/holo_red_light"
+		/>
+
+	</LinearLayout>
+
+	<LinearLayout android:layout_width="match_parent"
+				  android:layout_height="wrap_content"
+				  android:layout_marginTop="10dp"
+				  android:gravity="center"
+				  android:orientation="horizontal">
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:gravity="center"
+			android:text="ROOT状态: "
+			android:textColor="@android:color/holo_green_dark"
+			android:textSize="16sp"/>
+		<TextView
+			android:id="@+id/root_text"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:gravity="center"
+			android:text="未root"
+			android:textColor="@android:color/holo_red_light"
+		/>
+
+	</LinearLayout>
+
+	<Button android:id="@+id/regiest_btn"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="10dp"
+			android:text="注册程序"/>
+
+	<Button android:id="@+id/start_btn"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:text="启动程序"/>
+	<Button android:id="@+id/stop_btn"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:text="停止程序"/>
+	<Button android:id="@+id/update_btn"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:text="检查更新"/>
+
+	<TextView android:layout_width="match_parent"
+			  android:layout_height="wrap_content"
+			  android:layout_marginTop="20dp"
+			  android:textColor="@android:color/holo_red_light"
+
+			  android:text="使用说明:"/>
+	<TextView android:layout_width="match_parent"
+			  android:layout_height="wrap_content"
+			  android:layout_marginTop="5dp"
+			  android:text="1:手机上钉钉必须已登录."
+			  android:textColor="@android:color/holo_red_light"/>
+
+	<TextView android:layout_width="match_parent"
+			  android:layout_height="wrap_content"
+			  android:layout_marginTop="5dp"
+			  android:text="2:手机连接上公司的打卡网络!."
+			  android:textColor="@android:color/holo_red_light"/>
+
+
+	<TextView android:layout_width="match_parent"
+			  android:layout_height="wrap_content"
+			  android:layout_marginTop="5dp"
+			  android:text="3:点击注册按钮,等待注册,注册成功后可得到设备码."
+			  android:textColor="@android:color/holo_red_light"/>
+
+	<TextView android:layout_width="match_parent"
+			  android:layout_height="wrap_content"
+			  android:layout_marginTop="5dp"
+			  android:text="4:点击启动程序按钮,程序便开始进入后台工作."
+			  android:textColor="@android:color/holo_red_light"/>
+	<TextView android:layout_width="match_parent"
+			  android:layout_height="wrap_content"
+			  android:layout_marginTop="5dp"
+			  android:text="5:微信搜索'懒货签到',进入小程序绑定设备码即可."
+			  android:textColor="@android:color/holo_red_light"/>
+
+</LinearLayout>

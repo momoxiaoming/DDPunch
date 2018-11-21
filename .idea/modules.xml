@@ -4,6 +4,8 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/DDPunch.iml" filepath="$PROJECT_DIR$/DDPunch.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/autoleve/autoleve.iml" filepath="$PROJECT_DIR$/autoleve/autoleve.iml" />
+      <module fileurl="file://$PROJECT_DIR$/commonTool/commonTool.iml" filepath="$PROJECT_DIR$/commonTool/commonTool.iml" />
     </modules>
   </component>
 </project>
