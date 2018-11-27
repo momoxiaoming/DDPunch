@@ -2,6 +2,8 @@ package com.al.autoleve.core.automator.api;
 
 import android.support.test.uiautomator.UiSelector;
 
+import com.andr.tool.log.LogUtil;
+
 /**
  * UiSelector可通过控件的各种属性与节点关系定位组件。
  */

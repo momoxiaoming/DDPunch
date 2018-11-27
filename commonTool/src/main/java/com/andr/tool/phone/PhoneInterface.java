@@ -130,4 +130,10 @@ public interface PhoneInterface {
      * @return
      */
     boolean isHome(Context context);
+
+    /**
+     * 打开通知界面
+     * @param context
+     */
+    void OpenNotificationReadPermission(Context context);
 }

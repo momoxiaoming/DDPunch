@@ -1,5 +1,6 @@
 package com.al.autoleve.core.action;
 
+import com.al.autoleve.SharpData;
 import com.al.autoleve.core.data.UiDataCenter;
 import com.al.autoleve.core.util.AppConfig;
 import com.al.autoleve.core.util.At;
@@ -100,11 +101,21 @@ public class ActionManager {
         int temp_index = 0;
         int MAX_IMP = 2;
 
+        SharpData.setNotRlt(UiDataCenter.getInstance().getMainApkContext(),0);
+
         while (true) {
             TimeUtils.sleep(5000);
+            if(SharpData.getNotRlt(UiDataCenter.getInstance().getMainApkContext())==1){
+                //收到通知
+                UiDataCenter.getInstance().setTaskResult(true);
+                UiDataCenter.getInstance().setTaskDesc("监听通知打卡成功");
+                LogUtil.d("收到打卡通知");
 
+                break;
+            }
             if (temp_index > MAX_IMP || UiDataCenter.getInstance().isTaskResult()) {
                 LogUtil.d("打卡完成或者已到最大尝试次数,退出脚本执行循环");
+
                 break;
             }
             LogUtil.d("第"+temp_index+"次尝试--脚本执行---------");
@@ -126,6 +137,9 @@ public class ActionManager {
                     break;
                 case 1005://更新下班卡
                     At.doLuaFile(AppConfig.ATUO_MAIN_FILE_SIGNIN_ALL_PATH);
+                    break;
+                default:
+                    LogUtil.e("无此任务");
                     break;
             }
             temp_index++;

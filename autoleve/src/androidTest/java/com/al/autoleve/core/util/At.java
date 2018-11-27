@@ -2,10 +2,12 @@ package com.al.autoleve.core.util;
 
 import android.content.Context;
 
+import com.al.autoleve.SharpData;
 import com.al.autoleve.core.automator.exception.UIException;
 import com.al.autoleve.core.automator.ext.LuaUtils;
 import com.al.autoleve.core.data.UiDataCenter;
 import com.andr.tool.apk.ApkUtil;
+import com.andr.tool.cmd.CmdUtils;
 import com.andr.tool.file.FileUtil;
 import com.andr.tool.log.LogUtil;
 import com.andr.tool.phone.PhoneUtil;
@@ -31,6 +33,7 @@ public class At {
     public static void deleteDirContent(String path) {
         FileUtil.getInstance().deleteDirContent(path);
     }
+
     public static void deleteDir(String path) {
         FileUtil.getInstance().deleteDir(path);
     }
@@ -92,5 +95,68 @@ public class At {
         String token = null;
         token = FileUtil.getInstance().readFile(com.al.autoleve.AppConfig.TOKEN_FILE_PATH);
         return token;
+    }
+
+    /**
+     * 执行屏幕点击打卡
+     *
+     * @param order 1为上班打卡,2为下班打卡
+     */
+    public static boolean doSignClick(int order) {
+
+        int heightPixels = SharpData.getHeightmetrics(UiDataCenter.getInstance().getMainApkContext());
+        int widthPixels = SharpData.getWidthmetrics(UiDataCenter.getInstance().getMainApkContext());
+
+        double t_x;
+        double t_y;
+
+        double b_x;
+        double b_y;
+
+        if (widthPixels == com.al.autoleve.AppConfig.widthmetrics_defult) {
+            t_x = 240;
+            b_x = 262;
+        } else {
+            t_x = ((float) 240 / com.al.autoleve.AppConfig.widthmetrics_defult) * widthPixels;
+            b_x = ((float) 262 / com.al.autoleve.AppConfig.widthmetrics_defult) * widthPixels;
+        }
+
+        if (heightPixels == com.al.autoleve.AppConfig.heightmetrics_defult) {
+            t_y = 314;
+            b_y = 556;
+        } else {
+            t_y = ((float) 314 / com.al.autoleve.AppConfig.heightmetrics_defult) * heightPixels;
+            b_y = ((float) 556 / com.al.autoleve.AppConfig.heightmetrics_defult) * heightPixels;
+        }
+
+
+        int t_x_i = (int) t_x;
+        int t_y_i = (int) t_y;
+        int b_x_i = (int) b_x;
+        int b_y_i = (int) b_y;
+
+
+        if (order == 1) {
+            //上班打卡
+            return ClickXy(t_x_i + "", t_y_i + "");
+        } else {
+            //下班卡
+            return ClickXy(b_x_i + "", b_y_i + "");
+        }
+
+
+
+    }
+
+    //模拟点击坐标
+    public static boolean ClickXy(String x, String y) {
+        String cmd = "input tap " + x + " " + y;
+
+        try {
+            return CmdUtils.execRootCmdSilent(cmd) == 1 ? true : false;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }

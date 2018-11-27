@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -30,7 +31,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private Button start_btn, stop_btn, regiest, update;
 
-    public TextView token_text, root_text,version_text;
+    public TextView token_text, root_text, version_text;
 
     private boolean isPermisstion = false;
 
@@ -38,10 +39,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        MainActivityPermissionsDispatcher.needsPermissionWithPermissionCheck(this);
 
         initView();
         initData();
 
+        PhoneUtil.getInstance().OpenNotificationReadPermission(this);
 
     }
 
@@ -53,7 +56,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         regiest = findViewById(R.id.regiest_btn);
         update = findViewById(R.id.update_btn);
 
-        version_text=findViewById(R.id.version_text);
+        version_text = findViewById(R.id.version_text);
 
         start_btn.setOnClickListener(this);
         stop_btn.setOnClickListener(this);
@@ -64,7 +67,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public void initData() {
         //检查手机是否root,未root则不执行任何操作
-        MainActivityPermissionsDispatcher.needsPermissionWithPermissionCheck(this);
         String token = FileUtil.getInstance().readFile(AppConfig.TOKEN_FILE_PATH);
 
         if (token != null) {
@@ -72,8 +74,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             regiest.setText("程序已注册");
             regiest.setEnabled(false);
         }
-        version_text.setText("版本号:"+ApkUtil.getInstance().getAppVersionName(this));
+        version_text.setText("版本号:" + ApkUtil.getInstance().getAppVersionName(this));
         root_text.setText(PhoneUtil.getInstance().isRoot() ? "已root" : "未root");
+
+
+        DisplayMetrics metrics=new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        int widthPixels=metrics.widthPixels;
+        int heightPixels=metrics.heightPixels;
+
+        SharpData.setHeightmetrics(getApplicationContext(),heightPixels);
+        SharpData.setWidthmetrics(getApplicationContext(),widthPixels);
+
     }
 
 
@@ -121,6 +133,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             .permission.READ_PHONE_STATE})
     void needsPermission() {
         isPermisstion = true;
+
     }
 
     @Override

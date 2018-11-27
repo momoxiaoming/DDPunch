@@ -15,6 +15,7 @@ public class AppConfig {
 
     public static final String MAINT_TEST_PAKE = "com.al.autoleve.test";
 
+    public static final String dingding_PakeName="com.alibaba.android.rimet";
 
     public static final String BROCAST_ACTION = "com.al.autoleve.AutoBrocast.action";
 
@@ -32,5 +33,7 @@ public class AppConfig {
     public static final String TOKEN_FILE_PATH = FileUtil.getInstance().getExStoragePath() + File
             .separator + "autoLeve"+File.separator+"token";
 
-
+    //默认的4G+手机宽高
+    public static  int  widthmetrics_defult=480;
+    public static  int  heightmetrics_defult=854;
 }

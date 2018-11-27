@@ -157,7 +157,7 @@ public class FileUtil implements FileInterface {
             close(is);
             close(reader);
         }
-        return sb.toString();
+        return null;
     }
 
 

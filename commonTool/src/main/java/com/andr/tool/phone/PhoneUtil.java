@@ -2,6 +2,7 @@ package com.andr.tool.phone;
 
 import android.annotation.SuppressLint;
 import android.app.ActivityManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -11,10 +12,12 @@ import android.os.Environment;
 import android.os.StatFs;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
+import android.text.TextUtils;
 import android.text.format.Formatter;
 import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import com.andr.tool.cmd.CmdUtils;
 import com.andr.tool.util.PermissionsUtil;
@@ -251,5 +254,37 @@ public class PhoneUtil implements PhoneInterface {
             }
         }
         return false;
+    }
+
+
+    /**
+     * 打开通知权限
+     *
+     * @param context
+     */
+    @Override
+    public void OpenNotificationReadPermission(Context context) {
+
+        boolean flg = false;
+
+        String notiStr = Settings.Secure.getString(context.getContentResolver(),
+                "enabled_notification_listeners");
+
+        if (notiStr != null && !TextUtils.isEmpty(notiStr)) {
+            final String[] names = notiStr.split(":");
+            for (int i = 0; i < names.length; i++) {
+                ComponentName cn = ComponentName.unflattenFromString(names[i]);
+                if (cn != null) {
+                    flg = context.getPackageName().equals(cn.getPackageName());
+                }
+            }
+        }
+        if (!flg) {
+            Toast.makeText(context,"请勾选通知权限",Toast.LENGTH_LONG).show();
+            Intent intent = new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS");
+            intent.setFlags(intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(intent);
+        }
+
     }
 }

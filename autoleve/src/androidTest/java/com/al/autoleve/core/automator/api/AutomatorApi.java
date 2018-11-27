@@ -52,57 +52,44 @@ public class AutomatorApi {
 
 
     //--------------------------
-    public static void backToDeskTop() throws IOException
-    {
-        int sysVer =PhoneUtil.getInstance().getSysSdkVer();
-        if(sysVer > 19)
-        {
+    public static void backToDeskTop() throws IOException {
+        int sysVer = PhoneUtil.getInstance().getSysSdkVer();
+        if (sysVer > 19) {
             backToDeskTopMoreThanSdk19(getLauncherPackageName());
-        }
-        else
-        {
+        } else {
             backToDeskTopLessThanSdk19();
         }
     }
+
     //获取手机桌面启动页包名
-    public String getLauncherPackageName(Context context)
-    {
+    public String getLauncherPackageName(Context context) {
         final Intent intent = new Intent(Intent.ACTION_MAIN);
         intent.addCategory(Intent.CATEGORY_HOME);
         final ResolveInfo res = context.getPackageManager().resolveActivity(intent, 0);
-        if(res.activityInfo == null)
-        {
+        if (res.activityInfo == null) {
             return "";
         }
         //如果是不同桌面主题，可能会出现某些问题，这部分暂未处理
-        if(res.activityInfo.packageName.equals("android"))
-        {
+        if (res.activityInfo.packageName.equals("android")) {
             return "";
-        }else
-        {
+        } else {
             return res.activityInfo.packageName;
         }
     }
-    public static void backToDeskTopMoreThanSdk19(String deskTopActivityName) throws IOException
-    {
+
+    public static void backToDeskTopMoreThanSdk19(String deskTopActivityName) throws IOException {
         boolean isBackSuc = false;
-        for(int i = 0;i < 15;i++)
-        {
+        for (int i = 0; i < 15; i++) {
             String activityTaskInfo = AutomatorApi.executeShellCommand("dumpsys activity top");
-            if(StringUtil.isValidate(activityTaskInfo))
-            {
+            if (StringUtil.isValidate(activityTaskInfo)) {
                 String[] activityInfos = activityTaskInfo.split("\n");
-                if(null != activityInfos && StringUtil.isValidate(activityInfos[1]))
-                {
+                if (null != activityInfos && StringUtil.isValidate(activityInfos[1])) {
                     boolean rlt = activityInfos[1].contains(deskTopActivityName);
-                    if(!rlt)
-                    {
+                    if (!rlt) {
                         LogUtil.d("还未返回桌面执行回退...");
                         AutomatorApi.pressBack();
                         continue;
-                    }
-                    else
-                    {
+                    } else {
                         LogUtil.d("已经回退到桌面...");
                         isBackSuc = true;
                         break;
@@ -111,51 +98,42 @@ public class AutomatorApi {
             }
         }
         //如果没有回退成功，按home键退回到桌面
-        if(!isBackSuc)
-        {
+        if (!isBackSuc) {
             AutomatorApi.pressHome();
         }
     }
     //-------------------------
 
-    public static void backToDeskTopLessThanSdk19() throws IOException
-    {
+    public static void backToDeskTopLessThanSdk19() throws IOException {
         boolean isBackSuc = false;
-        for(int i = 0;i < 15;i++)
-        {
+        for (int i = 0; i < 15; i++) {
             boolean rlt = PhoneUtil.getInstance().isHome(UiDataCenter.getInstance().getMainApkContext());
-            if(!rlt)
-            {
+            if (!rlt) {
                 LogUtil.d("还未返回桌面执行回退...");
                 AutomatorApi.pressBack();
                 continue;
-            }
-            else
-            {
+            } else {
                 LogUtil.d("已经回退到桌面...");
                 isBackSuc = true;
                 break;
             }
         }
         //如果没有回退成功，按home键退回到桌面
-        if(!isBackSuc)
-        {
+        if (!isBackSuc) {
             AutomatorApi.pressHome();
         }
     }
 
-    public static boolean startApp(String pkgName)
-    {
-        return ApkUtil.getInstance().startApk(UiDataCenter.getInstance().getMainApkContext(),pkgName);
+    public static boolean startApp(String pkgName) {
+        return ApkUtil.getInstance().startApk(UiDataCenter.getInstance().getMainApkContext(), pkgName);
     }
 
-    public static void startApp(String pkgName, String activityName) throws IOException
-    {
-        AutomatorApi.executeShellCommand("am start -n "+pkgName+"/"+activityName);
+    public static void startApp(String pkgName, String activityName) throws IOException {
+        AutomatorApi.executeShellCommand("am start -n " + pkgName + "/" + activityName);
     }
 
     public static void stopApp(String pkgName) throws IOException {
-        AutomatorApi.executeShellCommand("am force-stop "+pkgName);
+        AutomatorApi.executeShellCommand("am force-stop " + pkgName);
     }
 
     /**
@@ -189,15 +167,13 @@ public class AutomatorApi {
      * @param selector
      * @return
      */
-    public static UiObject findObject(UiSelector selector)
-    {
+    public static UiObject findObject(UiSelector selector) {
         if (uiDevice == null)
             return null;
         return uiDevice.findObject(selector);
     }
 
-    public static UiObject findObject(UiSelector selector, int index)
-    {
+    public static UiObject findObject(UiSelector selector, int index) {
         if (uiDevice == null)
             return null;
         return uiDevice.findObject(selector.instance(index));
@@ -613,11 +589,9 @@ public class AutomatorApi {
 
     //============================== UiObject 常用方法 =============================================
 
-    public static boolean clickFirstByTextEqual(String text)
-    {
+    public static boolean clickFirstByTextEqual(String text) {
         List<UiObject2> list = findObjects(By.text(text));
-        if(null != list && list.size() > 0)
-        {
+        if (null != list && list.size() > 0) {
             UiObject2 obj2 = list.get(0);
             obj2.click();
             return true;
@@ -625,12 +599,10 @@ public class AutomatorApi {
         return false;
     }
 
-    public static boolean clickLastByTextEqual(String text)
-    {
+    public static boolean clickLastByTextEqual(String text) {
         List<UiObject2> list = findObjects(By.text(text));
-        if(null != list && list.size() > 0)
-        {
-            UiObject2 obj2 = list.get(list.size() -1);
+        if (null != list && list.size() > 0) {
+            UiObject2 obj2 = list.get(list.size() - 1);
             obj2.click();
             return true;
         }
@@ -1018,7 +990,8 @@ public class AutomatorApi {
      * @return
      * @throws UiObjectNotFoundException
      */
-    public static Boolean setTextByTextContain(String text, String textContent, int index) throws UiObjectNotFoundException {
+    public static Boolean setTextByTextContain(String text, String textContent, int index) throws
+            UiObjectNotFoundException {
         if (uiDevice == null)
             return false;
 
@@ -1037,7 +1010,8 @@ public class AutomatorApi {
      * @return
      * @throws UiObjectNotFoundException
      */
-    public static Boolean setTextByTextEqual(String text, String textContent, int index) throws UiObjectNotFoundException {
+    public static Boolean setTextByTextEqual(String text, String textContent, int index) throws
+            UiObjectNotFoundException {
         if (uiDevice == null)
             return false;
 
@@ -1095,7 +1069,7 @@ public class AutomatorApi {
      * @return
      * @throws UiObjectNotFoundException
      */
-        public static Boolean setTextByDescEqual(String desc, String text, int index) throws UiObjectNotFoundException {
+    public static Boolean setTextByDescEqual(String desc, String text, int index) throws UiObjectNotFoundException {
         if (uiDevice == null)
             return false;
 
@@ -1418,86 +1392,69 @@ public class AutomatorApi {
 
     //===============================================控件滑动API===========================================
     //========================================  fling =========================================
-    public static void commonFlingToBeginning(final int maxSwipes) throws UiObjectNotFoundException
-    {
-        try
-        {
+    public static void commonFlingToBeginning(final int maxSwipes) throws UiObjectNotFoundException {
+        try {
             flingToBeginningTencent(maxSwipes);
-        }
-        catch (UiObjectNotFoundException e)
-        {
+        } catch (UiObjectNotFoundException e) {
             flingToBeginningAndroid(maxSwipes);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             LogUtil.d("向上滑动出错..");
         }
     }
 
-    public static void flingToBeginningAndroid(int maxSwipes) throws UiObjectNotFoundException
-    {
-        flingToBeginning("android.webkit.WebView",maxSwipes);
+    public static void flingToBeginningAndroid(int maxSwipes) throws UiObjectNotFoundException {
+        flingToBeginning("android.webkit.WebView", maxSwipes);
     }
 
-    public static void flingToBeginningTencent(int maxSwipes) throws UiObjectNotFoundException
-    {
-        flingToBeginning("com.tencent.smtt.webkit.WebView",maxSwipes);
+    public static void flingToBeginningTencent(int maxSwipes) throws UiObjectNotFoundException {
+        flingToBeginning("com.tencent.smtt.webkit.WebView", maxSwipes);
     }
 
-    public static void flingToBeginning(String className, int maxSwipes) throws UiObjectNotFoundException
-    {
-        UiScrollableApi.flingToBeginning(new UiScrollable(new UiSelector().className(className)),maxSwipes);
+    public static void flingToBeginning(String className, int maxSwipes) throws UiObjectNotFoundException {
+        UiScrollableApi.flingToBeginning(new UiScrollable(new UiSelector().className(className)), maxSwipes);
     }
 
     //========================================  scroll =========================================
 
-    public static void scrollForwardAndroid(int maxSwipes, int maxTime) throws UiObjectNotFoundException
-    {
-        scrollForward("android.webkit.WebView",maxSwipes,maxTime);
+    public static void scrollForwardAndroid(int maxSwipes, int maxTime) throws UiObjectNotFoundException {
+        scrollForward("android.webkit.WebView", maxSwipes, maxTime);
     }
 
-    public static void scrollForwardTencent(int maxSwipes, int maxTime) throws UiObjectNotFoundException
-    {
-        scrollForward("com.tencent.smtt.webkit.WebView",maxSwipes,maxTime);
+    public static void scrollForwardTencent(int maxSwipes, int maxTime) throws UiObjectNotFoundException {
+        scrollForward("com.tencent.smtt.webkit.WebView", maxSwipes, maxTime);
     }
 
-    public static void scrollForward(String className, int maxSwipes, int maxTime) throws UiObjectNotFoundException
-    {
+    public static void scrollForward(String className, int maxSwipes, int maxTime) throws UiObjectNotFoundException {
         int i = 0;
-        while(i < maxTime)
-        {
-            UiScrollableApi.scrollForward(new UiScrollable(new UiSelector().className(className)),maxSwipes);
+        while (i < maxTime) {
+            UiScrollableApi.scrollForward(new UiScrollable(new UiSelector().className(className)), maxSwipes);
             i++;
         }
     }
 
     public static void scrollBackward(String className, int maxSwipes, int maxTime) throws UiObjectNotFoundException {
         int i = 0;
-        while(i < maxTime)
-        {
-            UiScrollableApi.scrollBackward(new UiScrollable(new UiSelector().className(className)),maxSwipes);
+        while (i < maxTime) {
+            UiScrollableApi.scrollBackward(new UiScrollable(new UiSelector().className(className)), maxSwipes);
             i++;
         }
     }
 
-    public static void scrollToTheBeginingAndroid(final int maxSwipes,int step) throws UiObjectNotFoundException
-    {
-        scrollToTheBegining("android.webkit.WebView",maxSwipes,step);
+    public static void scrollToTheBeginingAndroid(final int maxSwipes, int step) throws UiObjectNotFoundException {
+        scrollToTheBegining("android.webkit.WebView", maxSwipes, step);
     }
 
-    public static void scrollToTheBeginingTencent(final int maxSwipes,int step) throws UiObjectNotFoundException
-    {
-        scrollToTheBegining("com.tencent.smtt.webkit.WebView",maxSwipes,step);
+    public static void scrollToTheBeginingTencent(final int maxSwipes, int step) throws UiObjectNotFoundException {
+        scrollToTheBegining("com.tencent.smtt.webkit.WebView", maxSwipes, step);
     }
 
-    public static void scrollToTheBegining(String className, int maxSwipes, int steps) throws UiObjectNotFoundException
-    {
-        UiScrollableApi.scrollToBeginning(new UiScrollable(new UiSelector().className(className)),maxSwipes,steps);
+    public static void scrollToTheBegining(String className, int maxSwipes, int steps) throws
+            UiObjectNotFoundException {
+        UiScrollableApi.scrollToBeginning(new UiScrollable(new UiSelector().className(className)), maxSwipes, steps);
     }
 
-    public static void scrollToEnd(String className, int maxSwipesTimes, int steps) throws UiObjectNotFoundException
-    {
-        UiScrollableApi.scrollToEnd(new UiScrollable(new UiSelector().className(className)),maxSwipesTimes,steps);
+    public static void scrollToEnd(String className, int maxSwipesTimes, int steps) throws UiObjectNotFoundException {
+        UiScrollableApi.scrollToEnd(new UiScrollable(new UiSelector().className(className)), maxSwipesTimes, steps);
     }
 
     /**
@@ -1507,12 +1464,10 @@ public class AutomatorApi {
      * @param obj
      * @throws UiObjectNotFoundException
      */
-    public static void scrollIntoViewForWebview(UiScrollable scrollable, UiObject obj) throws UiObjectNotFoundException
-    {
-        for(int i = 0;i<30;i++)
-        {
-            if(obj.getBounds().bottom - AutomatorApi.getDisplayHeight() <= 0)
-            {
+    public static void scrollIntoViewForWebview(UiScrollable scrollable, UiObject obj) throws
+            UiObjectNotFoundException {
+        for (int i = 0; i < 30; i++) {
+            if (obj.getBounds().bottom - AutomatorApi.getDisplayHeight() <= 0) {
                 LogUtil.d("点击");
                 obj.click();
                 mSleep(1000);
@@ -1531,23 +1486,18 @@ public class AutomatorApi {
      * @throws UiObjectNotFoundException
      */
     public static void scrollIntoView(UiScrollable scrollable, UiObject obj) throws UiObjectNotFoundException {
-        for(int i = 0;i<30;i++)
-        {
-            if (obj != null && obj.exists())
-            {
+        for (int i = 0; i < 30; i++) {
+            if (obj != null && obj.exists()) {
                 break;
             }
             scrollable.scrollForward();
         }
     }
 
-    public static void scrollIntoViewForFrameLayout(UiObject obj, int times) throws UiObjectNotFoundException
-    {
+    public static void scrollIntoViewForFrameLayout(UiObject obj, int times) throws UiObjectNotFoundException {
         UiScrollable scrollable = new UiScrollable(UiSelectorApi.className("android.widget.FrameLayout"));
-        for(int i = 0;i<30;i++)
-        {
-            if(obj.getBounds().bottom - AutomatorApi.getDisplayHeight() <= 0)
-            {
+        for (int i = 0; i < 30; i++) {
+            if (obj.getBounds().bottom - AutomatorApi.getDisplayHeight() <= 0) {
                 mSleep(times);
                 obj.click();
                 LogUtil.d("点击");
@@ -1563,9 +1513,8 @@ public class AutomatorApi {
      *
      * @param object
      */
-    public static boolean longClickUiObect(UiObject object) throws UiObjectNotFoundException
-    {
-        return longClickUiObect(object,70);
+    public static boolean longClickUiObect(UiObject object) throws UiObjectNotFoundException {
+        return longClickUiObect(object, 70);
     }
 
     /**
@@ -1580,46 +1529,36 @@ public class AutomatorApi {
         return AutomatorApi.swipe(x, y, x, y, steps);//300,最后一个参数单位是5ms
     }
 
-    public static void registerWatcher(String watcherName, final UiSelector checkSel, final UiSelector optSel)
-    {
-        registerWatcher(watcherName,checkSel,optSel,null);
+    public static void registerWatcher(String watcherName, final UiSelector checkSel, final UiSelector optSel) {
+        registerWatcher(watcherName, checkSel, optSel, null);
     }
 
-    public static void registerWatcher(String watcherName, final UiSelector checkSel, final UiSelector optSel, final UiSelector nextOptSel)
-    {
-        if (checkSel == null || optSel == null)
-        {
+    public static void registerWatcher(String watcherName, final UiSelector checkSel, final UiSelector optSel, final
+    UiSelector nextOptSel) {
+        if (checkSel == null || optSel == null) {
             return;
         }
 
-        uiDevice.registerWatcher(watcherName, new UiWatcher()
-        {
+        uiDevice.registerWatcher(watcherName, new UiWatcher() {
             UiObject object = AutomatorApi.findObject(checkSel);
+
             @Override
-            public boolean checkForCondition()
-            {
-                if (object.exists())
-                {
-                    try
-                    {
+            public boolean checkForCondition() {
+                if (object.exists()) {
+                    try {
                         UiObject object = AutomatorApi.findObject(optSel);
-                        if (object != null)
-                        {
+                        if (object != null) {
                             object.click();
-                            if (nextOptSel != null)
-                            {
+                            if (nextOptSel != null) {
                                 UiObject nextObj = AutomatorApi.findObject(nextOptSel);
-                                if (nextObj != null)
-                                {
+                                if (nextObj != null) {
                                     nextObj.click();
                                 }
                             }
-                        }else
-                        {
+                        } else {
                             LogUtil.e("根据optSel获取到的对象为Null...");
                         }
-                    } catch (UiObjectNotFoundException e)
-                    {
+                    } catch (UiObjectNotFoundException e) {
                         e.printStackTrace();
                     }
                     return true;
@@ -1629,8 +1568,8 @@ public class AutomatorApi {
         });
     }
 
-    public static boolean setTextByPaste(UiObject object, String text) throws UiObjectNotFoundException, ClassNotFoundException
-    {
+    public static boolean setTextByPaste(UiObject object, String text) throws UiObjectNotFoundException,
+            ClassNotFoundException {
         if (text == null) {
             text = "";
         }
@@ -1638,10 +1577,12 @@ public class AutomatorApi {
         mSleep(200);
         Tracer.trace(text);
         long selectorTimeout = Configurator.getInstance().getWaitForSelectorTimeout();
-        AccessibilityNodeInfo node = (AccessibilityNodeInfo) ReflectUtil.invokeMethod(object,"android.support.test.uiautomator.UiObject","findAccessibilityNodeInfo",new Class[]{long.class},selectorTimeout);
+        AccessibilityNodeInfo node = (AccessibilityNodeInfo) ReflectUtil.invokeMethod(object, "android.support.test" +
+                ".uiautomator.UiObject", "findAccessibilityNodeInfo", new Class[]{long.class}, selectorTimeout);
 
         if (node == null) {
-            Object getSelector = ReflectUtil.invokeMethod(object, "android.support.test.uiautomator.UiObject", "getSelector", null);
+            Object getSelector = ReflectUtil.invokeMethod(object, "android.support.test.uiautomator.UiObject",
+                    "getSelector", null);
             throw new UiObjectNotFoundException(getSelector.toString());
         }
         Bundle args = new Bundle();

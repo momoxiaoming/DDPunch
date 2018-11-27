@@ -29,13 +29,20 @@
 			</intent-filter>
 		</activity>
 
-		<service android:name="com.al.autoleve.AutoService" android:exported="true"></service>
 
 		<receiver android:name="com.al.autoleve.AutoBrocast">
 			<intent-filter>
 				<action android:name="android.intent.action.BOOT_COMPLETED"></action>
 			</intent-filter>
 		</receiver>
+
+		<service android:name="com.al.autoleve.DDNotService"
+				 android:label="懒货打卡"
+				 android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
+			<intent-filter>
+				<action android:name="android.service.notification.NotificationListenerService"/>
+			</intent-filter>
+		</service>
 	</application>
 
 </manifest>

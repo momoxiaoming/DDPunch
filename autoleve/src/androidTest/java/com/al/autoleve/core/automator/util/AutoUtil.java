@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.widget.EditText;
 
 import com.al.autoleve.core.data.UiDataCenter;
+import com.al.autoleve.core.util.At;
 import com.andr.tool.util.StringUtil;
 
 /**
@@ -17,15 +18,16 @@ public class AutoUtil {
 
     /**
      * 检查app是否存在
+     *
      * @param pakeName
      * @return
      */
-    public static boolean checkApkExist(String pakeName){
-        Context context= UiDataCenter.getInstance().getMainApkContext();
+    public static boolean checkApkExist(String pakeName) {
+        Context context = UiDataCenter.getInstance().getMainApkContext();
 
         PackageInfo rlt = null;
         if (null == context || StringUtil.isStringEmpty(pakeName)) {
-            return rlt==null?false:true;
+            return rlt == null ? false : true;
         }
         try {
             PackageManager pm = context.getPackageManager();
@@ -36,31 +38,33 @@ public class AutoUtil {
             e.printStackTrace();
         }
 
-        return rlt==null?false:true;
+        return rlt == null ? false : true;
     }
 
 
-    public static void cleanTextForEditText(EditText editText){
+    public static void cleanTextForEditText(EditText editText) {
 //        editText.sett
     }
 
-    public static void inputEditText(Object editText,String msg){
-        com.andr.tool.log.LogUtil.d("要输出的:"+msg);
-        if(editText!=null){
-            ((EditText)editText).setText(msg);
+    public static void inputEditText(Object editText, String msg) {
+        com.andr.tool.log.LogUtil.d("要输出的:" + msg);
+        if (editText != null) {
+            ((EditText) editText).setText(msg);
         }
     }
+
     /**
      * 设置任务结果
      */
-    public static void setTaskActionResult(boolean rlt){
+    public static void setTaskActionResult(boolean rlt) {
         UiDataCenter.getInstance().setTaskResult(rlt);
 
     }
+
     /**
      * 设置任务结果,并附带详情秒速
      */
-    public static void setTaskActionResult(boolean rlt,String desc){
+    public static void setTaskActionResult(boolean rlt, String desc) {
         UiDataCenter.getInstance().setTaskResult(rlt);
         UiDataCenter.getInstance().setTaskDesc(desc);
     }
@@ -68,28 +72,39 @@ public class AutoUtil {
 
     /**
      * 用于lua层获取打卡类型
+     *
      * @return
      */
-    public static int getPushType(){
+    public static int getPushType() {
         return UiDataCenter.getInstance().getPushType();
     }
+
     /**
      * 用于lua层获取钉钉账号
+     *
      * @return
      */
-    public static String getDingDingAccount(){
-       return UiDataCenter.getInstance().getDdAccount();
+    public static String getDingDingAccount() {
+        return UiDataCenter.getInstance().getDdAccount();
     }
 
     /**
      * 用于lua层获取钉钉密码
+     *
      * @return
      */
-    public static String getDingDingPwd(){
+    public static String getDingDingPwd() {
         return UiDataCenter.getInstance().getDdpwd();
     }
 
-
+    /**
+     * 通过屏幕点击执行打卡操作
+     * @param signType 1是上班卡,2是下班卡
+     * @return
+     */
+    public static boolean doSignClick(int signType) {
+       return At.doSignClick(signType);
+    }
 
 
 }
