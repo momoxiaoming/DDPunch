@@ -28,6 +28,7 @@ public class AppConfig {
 
 
     public static final String AUTO_MAIN_MK_NAME = "ddAuto";// 工作主目录名称
+
     public static final String AUTO_EXCEPT_MK_NAME = "except";//异常目录
     public static final String AUTO_WORK_MK_NAME = "work";//lua 工作目录
     public static final String AUTO_OTHER_MK_NAME = "other";//其他

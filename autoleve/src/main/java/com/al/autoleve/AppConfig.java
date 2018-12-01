@@ -21,11 +21,13 @@ public class AppConfig {
 
     public static final String MAIN_URL="http://api.momoxiaoming.com:9102/ddPush_andr/";
 
+    public static final String AUTO_MAIN_MK_NAME = FileUtil.getInstance().getExStoragePath()+File.separator+"ddAuto";// 工作主目录名称
+
+    public static final String AUTO_OTHER_MK_NAME =AUTO_MAIN_MK_NAME+File.separator+ "other";//下载的文件存放位置
 
     public static final String REQ_REGIEST_URL = MAIN_URL + "regDev/";
     public static final String UPDATE_APK_URL = MAIN_URL + "updateApk/";
 
-    public static final String DOWN_APK_PATH = FileUtil.getInstance().getExStoragePath();
 
     public static final String TEST_APP_PAKENAME = "com.al.autoleve.test";
 

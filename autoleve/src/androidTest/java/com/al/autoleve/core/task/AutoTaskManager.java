@@ -2,7 +2,9 @@ package com.al.autoleve.core.task;
 
 import android.content.Context;
 
+import com.al.autoleve.SharpData;
 import com.al.autoleve.core.action.ActionManager;
+import com.al.autoleve.core.data.UiDataCenter;
 import com.al.autoleve.core.util.AppConfig;
 import com.al.autoleve.core.util.At;
 import com.al.autoleve.core.util.HttpUtil;
@@ -104,6 +106,7 @@ public class AutoTaskManager {
         while (true) {
             try {
                 reqMainTaskAction();
+                SharpData.setActive(UiDataCenter.getInstance().getMainApkContext(),System.currentTimeMillis()/1000);
                 Thread.sleep(5000);  //5秒拉取一次任务
             } catch (Exception e) {
                 e.printStackTrace();

@@ -43,21 +43,47 @@
 				  android:layout_marginTop="10dp"
 				  android:gravity="center"
 				  android:orientation="horizontal">
-		<TextView
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:gravity="center"
-			android:text="ROOT状态: "
-			android:textColor="@android:color/holo_green_dark"
-			android:textSize="16sp"/>
-		<TextView
-			android:id="@+id/root_text"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:gravity="center"
-			android:text="未root"
-			android:textColor="@android:color/holo_red_light"
-		/>
+		<LinearLayout android:layout_width="match_parent"
+					  android:layout_height="wrap_content"
+					  android:layout_weight="1" android:gravity="center"
+					  android:orientation="horizontal">
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:gravity="center"
+				android:text="程序状态: "
+				android:textColor="@android:color/holo_green_dark"
+				android:textSize="16sp"/>
+			<TextView
+				android:id="@+id/run_text"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:gravity="center"
+				android:text="未运行"
+				android:textColor="@android:color/holo_red_light"
+			/>
+		</LinearLayout>
+		<LinearLayout android:layout_width="match_parent"
+					  android:layout_height="wrap_content"
+					  android:layout_weight="1" android:gravity="center"
+					  android:orientation="horizontal">
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:gravity="center"
+				android:text="ROOT状态: "
+				android:textColor="@android:color/holo_green_dark"
+				android:textSize="16sp"/>
+			<TextView
+				android:id="@+id/root_text"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:gravity="center"
+				android:text="未root"
+				android:textColor="@android:color/holo_red_light"
+			/>
+		</LinearLayout>
+
 
 	</LinearLayout>
 
@@ -83,37 +109,41 @@
 	<TextView android:layout_width="match_parent"
 			  android:layout_height="wrap_content"
 			  android:layout_marginTop="20dp"
-			  android:textColor="@android:color/holo_red_light"
+			  android:text="使用说明:"
 
-			  android:text="使用说明:"/>
+			  android:textColor="@android:color/holo_red_light"/>
 	<TextView android:layout_width="match_parent"
 			  android:layout_height="wrap_content"
-			  android:layout_marginTop="5dp"
+			  android:layout_marginTop="2dp"
 			  android:text="1:手机上钉钉必须已登录."
-			  android:textColor="@android:color/holo_red_light"/>
+			  android:textColor="@android:color/holo_red_light"
+			  android:textSize="12sp"/>
 
 	<TextView android:layout_width="match_parent"
 			  android:layout_height="wrap_content"
-			  android:layout_marginTop="5dp"
-			  android:text="2:手机连接上公司的打卡网络!."
-			  android:textColor="@android:color/holo_red_light"/>
+			  android:layout_marginTop="2dp" android:text="2:手机连接上公司的打卡网络!."
+
+			  android:textColor="@android:color/holo_red_light"
+			  android:textSize="12sp"/>
 
 
 	<TextView android:layout_width="match_parent"
 			  android:layout_height="wrap_content"
-			  android:layout_marginTop="5dp"
-			  android:text="3:点击注册按钮,等待注册,注册成功后可得到设备码."
-			  android:textColor="@android:color/holo_red_light"/>
+			  android:layout_marginTop="2dp" android:text="3:点击注册按钮,等待注册,注册成功后可得到设备码."
+
+			  android:textColor="@android:color/holo_red_light"
+			  android:textSize="12sp"/>
 
 	<TextView android:layout_width="match_parent"
 			  android:layout_height="wrap_content"
-			  android:layout_marginTop="5dp"
-			  android:text="4:点击启动程序按钮,程序便开始进入后台工作."
-			  android:textColor="@android:color/holo_red_light"/>
+			  android:layout_marginTop="2dp" android:text="4:点击启动程序按钮,程序便开始进入后台工作."
+
+			  android:textColor="@android:color/holo_red_light"
+			  android:textSize="12sp"/>
 	<TextView android:layout_width="match_parent"
 			  android:layout_height="wrap_content"
-			  android:layout_marginTop="5dp"
-			  android:text="5:微信搜索'懒货签到',进入小程序绑定设备码即可."
-			  android:textColor="@android:color/holo_red_light"/>
+			  android:layout_marginTop="2dp" android:text="5:微信搜索'懒货签到',进入小程序绑定设备码即可."
+			  android:textColor="@android:color/holo_red_light"
+			  android:textSize="12sp"/>
 
 </LinearLayout>

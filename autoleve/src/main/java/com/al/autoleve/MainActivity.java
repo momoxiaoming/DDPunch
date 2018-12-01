@@ -22,39 +22,45 @@ import com.andr.tool.phone.PhoneUtil;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+
 import permissions.dispatcher.NeedsPermission;
 import permissions.dispatcher.RuntimePermissions;
 
 
 @RuntimePermissions
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener
+{
 
     private Button start_btn, stop_btn, regiest, update;
 
-    public TextView token_text, root_text, version_text;
+    public TextView token_text, root_text, version_text, runText;
 
     private boolean isPermisstion = false;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         MainActivityPermissionsDispatcher.needsPermissionWithPermissionCheck(this);
+        PhoneUtil.getInstance().OpenNotificationReadPermission(this);
 
         initView();
         initData();
 
-        PhoneUtil.getInstance().OpenNotificationReadPermission(this);
 
     }
 
-    private void initView() {
+    private void initView()
+    {
         start_btn = findViewById(R.id.start_btn);
         stop_btn = findViewById(R.id.stop_btn);
         token_text = findViewById(R.id.token_text);
         root_text = findViewById(R.id.root_text);
         regiest = findViewById(R.id.regiest_btn);
         update = findViewById(R.id.update_btn);
+        runText = findViewById(R.id.run_text);
 
         version_text = findViewById(R.id.version_text);
 
@@ -65,64 +71,90 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-    public void initData() {
-        //检查手机是否root,未root则不执行任何操作
-        String token = FileUtil.getInstance().readFile(AppConfig.TOKEN_FILE_PATH);
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+        setIsRunState();
+    }
 
-        if (token != null) {
-            token_text.setText(token);
-            regiest.setText("程序已注册");
-            regiest.setEnabled(false);
-        }
-        version_text.setText("版本号:" + ApkUtil.getInstance().getAppVersionName(this));
-        root_text.setText(PhoneUtil.getInstance().isRoot() ? "已root" : "未root");
+    public void initData()
+    {
 
 
-        DisplayMetrics metrics=new DisplayMetrics();
+        DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
-        int widthPixels=metrics.widthPixels;
-        int heightPixels=metrics.heightPixels;
+        int widthPixels = metrics.widthPixels;
+        int heightPixels = metrics.heightPixels;
 
-        SharpData.setHeightmetrics(getApplicationContext(),heightPixels);
-        SharpData.setWidthmetrics(getApplicationContext(),widthPixels);
+        SharpData.setHeightmetrics(getApplicationContext(), heightPixels);
+        SharpData.setWidthmetrics(getApplicationContext(), widthPixels);
+        File file = new File(AppConfig.AUTO_OTHER_MK_NAME);
+        if (!file.exists())
+        {
+            file.mkdirs();
+        }
 
+        //创建目录必须一级级创建
+        FileUtil.getInstance().makeDirs(AppConfig.AUTO_MAIN_MK_NAME);
+//        FileUtil.getInstance().makeDirs(AppConfig.AUTO_OTHER_MK_NAME);
+
+        setIsRunState();
+        setToken();
     }
 
 
     @Override
-    public void onClick(View v) {
+    public void onClick(View v)
+    {
 
-        if (v == regiest) {
-            if (isPermisstion) {
+        if (!PhoneUtil.getInstance().isRoot())
+        {
+            Toast.makeText(this, "手机root后方可使用本程序!", Toast.LENGTH_SHORT);
+            return;
+        }
+
+        if (v == regiest)
+        {
+            if (isPermisstion)
+            {
 
                 regiest();
 
-            } else {
+            } else
+            {
                 Toast.makeText(this, "请打开相应权限", Toast.LENGTH_SHORT).show();
             }
-        } else if (v == start_btn) {
+        } else if (v == start_btn)
+        {
             TaskManager.startTestApp(this);
 
-        } else if (v == stop_btn) {
+        } else if (v == stop_btn)
+        {
 
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("提示");
             builder.setMessage("停止程序后,程序将无法执行打卡,可通过启动按钮启动,是否确定?");
-            builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            builder.setPositiveButton("确定", new DialogInterface.OnClickListener()
+            {
                 @Override
-                public void onClick(DialogInterface dialog, int which) {
+                public void onClick(DialogInterface dialog, int which)
+                {
                     TaskManager.killGrep(MainActivity.this);
-
+                    runText.setText("已停止");
                 }
             });
-            builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            builder.setNegativeButton("取消", new DialogInterface.OnClickListener()
+            {
                 @Override
-                public void onClick(DialogInterface dialog, int which) {
+                public void onClick(DialogInterface dialog, int which)
+                {
 
                 }
             });
             builder.create().show();
-        } else if (v == update) {
+        } else if (v == update)
+        {
 
             TaskManager.updateApk(this);
         }
@@ -131,21 +163,51 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @NeedsPermission({Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest
             .permission.READ_PHONE_STATE})
-    void needsPermission() {
+    void needsPermission()
+    {
         isPermisstion = true;
 
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[]
-            grantResults) {
+            grantResults)
+    {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         MainActivityPermissionsDispatcher.onRequestPermissionsResult(this, requestCode, grantResults);
     }
 
+    private void setIsRunState()
+    {
+        if (SharpData.getActive(this))
+        {
+            runText.setText("正常运行");
+        } else
+        {
+            runText.setText("未运行");
+        }
+    }
 
-    private void regiest() {
-        try {
+    private void setToken()
+    {
+        //检查手机是否root,未root则不执行任何操作
+        String token = FileUtil.getInstance().readFile(AppConfig.TOKEN_FILE_PATH);
+
+        if (token != null)
+        {
+            token_text.setText(token);
+            regiest.setText("程序已注册");
+            regiest.setEnabled(false);
+        }
+        version_text.setText("版本号:" + ApkUtil.getInstance().getAppVersionName(this));
+        root_text.setText(PhoneUtil.getInstance().isRoot() ? "已root" : "未root");
+
+    }
+
+    private void regiest()
+    {
+        try
+        {
             JSONObject reqJosn = new JSONObject();
             reqJosn.put("dev_andId", PhoneUtil.getInstance().getAndId(getApplicationContext()));
             reqJosn.put("dev_imei", PhoneUtil.getInstance().getImei(getApplicationContext()));
@@ -159,24 +221,30 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             dialog.setCanceledOnTouchOutside(false);
             dialog.show();
             OkHttpUtil.getInstence().postForAsy(AppConfig.REQ_REGIEST_URL, reqJosn.toString(), new OkHttpUtil
-                    .ResultCallBack() {
+                    .ResultCallBack()
+            {
                 @Override
-                public void sucess(String res) {
+                public void sucess(String res)
+                {
 
                     dialog.dismiss();
                     LogUtil.d("注册返回->" + res);
-                    if (res == null || "".equals(res)) {
+                    if (res == null || "".equals(res))
+                    {
                         LogUtil.e("网络出错");
                         Toast.makeText(MainActivity.this, "服务器返回为空", Toast.LENGTH_SHORT).show();
-                    } else {
+                    } else
+                    {
 
                         JSONObject rltJson = null;
-                        try {
+                        try
+                        {
                             rltJson = new JSONObject(res);
                             int resCode = Integer.valueOf(rltJson.getString("resCode"));
                             final String resMsg = rltJson.getString("resMsg");
 
-                            if (resCode == 0) {
+                            if (resCode == 0)
+                            {
                                 //保存code
                                 LogUtil.i(resMsg);
                                 String resData = rltJson.getString("resData");
@@ -184,25 +252,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 resData = resDataJson.getString("devToken");
                                 FileUtil.getInstance().writeStrToFile(resData, AppConfig.TOKEN_FILE_PATH, false);
                                 final String finalResData = resData;
-                                runOnUiThread(new Runnable() {
+                                runOnUiThread(new Runnable()
+                                {
                                     @Override
-                                    public void run() {
+                                    public void run()
+                                    {
                                         token_text.setText(finalResData);
                                         regiest.setText("程序已注册");
                                         regiest.setEnabled(false);
                                     }
                                 });
-                            } else {
+                            } else
+                            {
                                 LogUtil.e(resMsg);
-                                runOnUiThread(new Runnable() {
+                                runOnUiThread(new Runnable()
+                                {
                                     @Override
-                                    public void run() {
+                                    public void run()
+                                    {
                                         Toast.makeText(MainActivity.this, resMsg, Toast.LENGTH_SHORT).show();
 
                                     }
                                 });
                             }
-                        } catch (JSONException e) {
+                        } catch (JSONException e)
+                        {
                             e.printStackTrace();
                         }
 
@@ -212,11 +286,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
 
                 @Override
-                public void faild(String res) {
+                public void faild(String res)
+                {
                     dialog.dismiss();
-                    runOnUiThread(new Runnable() {
+                    runOnUiThread(new Runnable()
+                    {
                         @Override
-                        public void run() {
+                        public void run()
+                        {
                             Toast.makeText(MainActivity.this, "网络错误", Toast.LENGTH_SHORT).show();
 
                         }
@@ -224,7 +301,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 }
             });
-        } catch (JSONException e) {
+        } catch (JSONException e)
+        {
             e.printStackTrace();
         }
 
