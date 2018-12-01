@@ -102,8 +102,26 @@ public class AutoUtil {
      * @param signType 1是上班卡,2是下班卡
      * @return
      */
-    public static boolean doSignClick(int signType) {
-       return At.doSignClick(signType);
+    public static boolean doSignClick(final int signType) {
+        new Thread(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                //必须在子线程才可实现点击操作
+                com.andr.tool.log.LogUtil.d("执行点击打卡:"+signType);
+                boolean flg=At.doSignClick(signType);
+                com.andr.tool.log.LogUtil.d(flg?"点击成功":"点击失败");
+            }
+        }).start();
+        try
+        {
+            Thread.sleep(3000);
+        } catch (InterruptedException e)
+        {
+            e.printStackTrace();
+        }
+        return true;
     }
 
 

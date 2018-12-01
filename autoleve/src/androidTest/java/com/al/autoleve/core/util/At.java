@@ -150,9 +150,12 @@ public class At {
 
     //模拟点击坐标
     public static boolean ClickXy(String x, String y) {
+        LogUtil.d("点击的坐标:x"+x+"  y:"+y);
         String cmd = "input tap " + x + " " + y;
 
         try {
+
+
             return CmdUtils.execRootCmdSilent(cmd) == 1 ? true : false;
         } catch (Exception e) {
             e.printStackTrace();
