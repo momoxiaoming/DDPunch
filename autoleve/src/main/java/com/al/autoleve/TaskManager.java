@@ -4,7 +4,10 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.widget.Toast;
 
@@ -204,7 +207,7 @@ public class TaskManager
             @Override
             protected Integer doInBackground(Integer... integers)
             {
-
+                toggleNotificationListenerService(content);
 
                 if (CmdUtils.execRootCmdSilent(AppConfig.RESTART_MAIN_LOGICAL_APK_CMD) != -1)
                 {
@@ -393,5 +396,16 @@ public class TaskManager
                 dialog.setMessage(msg);
             }
         });
+    }
+
+    private static void toggleNotificationListenerService(Context context)
+    {
+        PackageManager pm = context.getPackageManager();
+        pm.setComponentEnabledSetting(new ComponentName(context, DDNotService.class),
+                PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+
+        pm.setComponentEnabledSetting(new ComponentName(context, DDNotService.class),
+                PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+
     }
 }
