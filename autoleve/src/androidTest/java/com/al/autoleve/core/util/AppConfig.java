@@ -11,6 +11,7 @@ import static com.al.autoleve.AppConfig.MAIN_URL;
  */
 
 public class AppConfig {
+    public static final String DOCOMPENT_NAME= "深圳市火星网络有限公司";// 要打卡的公司名
 
 
     public static final String AUTO_LUA_EXCEPT_NAME= "exception.lua";// 异常处理的lua文件名

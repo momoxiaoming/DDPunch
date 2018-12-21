@@ -1,20 +1,26 @@
 package com.al.autoleve.core.automator.util;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.widget.EditText;
 
 import com.al.autoleve.core.data.UiDataCenter;
+import com.al.autoleve.core.util.AppConfig;
 import com.al.autoleve.core.util.At;
 import com.andr.tool.util.StringUtil;
+
+import java.net.URLEncoder;
 
 /**
  * 这里主要存放一些我们和lua的数据交换接口
  * Created by zhangxiaoming on 2018/9/21.
  */
 
-public class AutoUtil {
+public class AutoUtil
+{
 
     /**
      * 检查app是否存在
@@ -22,19 +28,24 @@ public class AutoUtil {
      * @param pakeName
      * @return
      */
-    public static boolean checkApkExist(String pakeName) {
+    public static boolean checkApkExist(String pakeName)
+    {
         Context context = UiDataCenter.getInstance().getMainApkContext();
 
         PackageInfo rlt = null;
-        if (null == context || StringUtil.isStringEmpty(pakeName)) {
+        if (null == context || StringUtil.isStringEmpty(pakeName))
+        {
             return rlt == null ? false : true;
         }
-        try {
+        try
+        {
             PackageManager pm = context.getPackageManager();
-            if (pm != null) {
+            if (pm != null)
+            {
                 rlt = pm.getPackageInfo(pakeName, PackageManager.GET_UNINSTALLED_PACKAGES);
             }
-        } catch (PackageManager.NameNotFoundException e) {
+        } catch (PackageManager.NameNotFoundException e)
+        {
             e.printStackTrace();
         }
 
@@ -42,13 +53,16 @@ public class AutoUtil {
     }
 
 
-    public static void cleanTextForEditText(EditText editText) {
+    public static void cleanTextForEditText(EditText editText)
+    {
 //        editText.sett
     }
 
-    public static void inputEditText(Object editText, String msg) {
+    public static void inputEditText(Object editText, String msg)
+    {
         com.andr.tool.log.LogUtil.d("要输出的:" + msg);
-        if (editText != null) {
+        if (editText != null)
+        {
             ((EditText) editText).setText(msg);
         }
     }
@@ -56,7 +70,8 @@ public class AutoUtil {
     /**
      * 设置任务结果
      */
-    public static void setTaskActionResult(boolean rlt) {
+    public static void setTaskActionResult(boolean rlt)
+    {
         UiDataCenter.getInstance().setTaskResult(rlt);
 
     }
@@ -64,7 +79,8 @@ public class AutoUtil {
     /**
      * 设置任务结果,并附带详情秒速
      */
-    public static void setTaskActionResult(boolean rlt, String desc) {
+    public static void setTaskActionResult(boolean rlt, String desc)
+    {
         UiDataCenter.getInstance().setTaskResult(rlt);
         UiDataCenter.getInstance().setTaskDesc(desc);
     }
@@ -75,7 +91,8 @@ public class AutoUtil {
      *
      * @return
      */
-    public static int getPushType() {
+    public static int getPushType()
+    {
         return UiDataCenter.getInstance().getPushType();
     }
 
@@ -84,7 +101,8 @@ public class AutoUtil {
      *
      * @return
      */
-    public static String getDingDingAccount() {
+    public static String getDingDingAccount()
+    {
         return UiDataCenter.getInstance().getDdAccount();
     }
 
@@ -93,25 +111,28 @@ public class AutoUtil {
      *
      * @return
      */
-    public static String getDingDingPwd() {
+    public static String getDingDingPwd()
+    {
         return UiDataCenter.getInstance().getDdpwd();
     }
 
     /**
      * 通过屏幕点击执行打卡操作
+     *
      * @param signType 1是上班卡,2是下班卡
      * @return
      */
-    public static boolean doSignClick(final int signType) {
+    public static boolean doSignClick(final int signType)
+    {
         new Thread(new Runnable()
         {
             @Override
             public void run()
             {
                 //必须在子线程才可实现点击操作
-                com.andr.tool.log.LogUtil.d("执行点击打卡:"+signType);
-                boolean flg=At.doSignClick(signType);
-                com.andr.tool.log.LogUtil.d(flg?"点击成功":"点击失败");
+                com.andr.tool.log.LogUtil.d("执行点击打卡:" + signType);
+                boolean flg = At.doSignClick(signType);
+                com.andr.tool.log.LogUtil.d(flg ? "点击成功" : "点击失败");
             }
         }).start();
         try
@@ -124,5 +145,18 @@ public class AutoUtil {
         return true;
     }
 
+    public static String  doDingdingPage()
+    {
+
+        String url = "dingtalk://dingtalkclient/page/link?url=" +
+                URLEncoder.encode("https://attend.dingtalk.com/attend/index.html");
+
+        Intent intent=new Intent(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse(url));
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        UiDataCenter.getInstance().getMainApkContext().startActivity(intent);
+
+        return AppConfig.DOCOMPENT_NAME;
+    }
 
 }
