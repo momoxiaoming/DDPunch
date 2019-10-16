@@ -1,8 +1,5 @@
-# DingDingPunch
-
-### app 是旧版使用AccessibilityService的打卡项目
-
-### autoleve 是新版的采用uiautomator的打卡项目
+该项目为老项目, 
+新版项目请移步 https://github.com/momoxiaoming/DingDingAutoPush
+模拟点击API已独立封装成项目: https://github.com/momoxiaoming/accessibilityDemo
 
 
-模拟点击api请参考独立封装项目: https://github.com/momoxiaoming/accessibilityDemo
